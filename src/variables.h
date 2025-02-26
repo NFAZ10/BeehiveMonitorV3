@@ -19,6 +19,8 @@ extern bool debug;
 extern bool tareRequested;
 extern bool lowPowerMode;
 extern bool useArduinoCloud;
+extern bool forceUpdate;
+extern bool weightset;
 
 extern float h1, t1;
 extern float h2, t2;

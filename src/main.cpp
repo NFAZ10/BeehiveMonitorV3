@@ -27,7 +27,7 @@ float temp2 = NAN;
 float weight = 0.0;
 int counter = 0;
 float mVA;
-bool weightset;
+bool weightset = false;
 
 
 
@@ -46,7 +46,7 @@ void setup() {
 
 
 void loop() {
-
+    handleSerialCommands();
     readDHTSensors();
     updateScale();
     measureBattery();

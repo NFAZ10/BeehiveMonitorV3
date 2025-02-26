@@ -2,7 +2,9 @@
 #include "variables.h"
 #include <HTTPClient.h>
 #include <Update.h>
+#include "webserialsetup.h"
 
+extern bool forceUpdate;
 
 // Function to perform OTA
 void performOTA() {
@@ -30,25 +32,25 @@ void performOTA() {
       size_t written = Update.writeStream(*stream);
 
       if (written == contentLength) {
-        Serial.println("Firmware written successfully. Rebooting...");
+        WebSerial.println("Firmware written successfully. Rebooting...");
         if (Update.end()) {
           if (Update.isFinished()) {
-            Serial.println("Update successful. Rebooting...");
+            WebSerial.println("Update successful. Rebooting...");
             ESP.restart();
           } else {
-            Serial.println("Update not finished. Something went wrong.");
+            WebSerial.println("Update not finished. Something went wrong.");
           }
         } else {
-          Serial.println("Update failed. Error #: " + String(Update.getError()));
+          WebSerial.println("Update failed. Error #: " + String(Update.getError()));
         }
       } else {
-        Serial.println("Written only " + String(written) + "/" + String(contentLength) + ". Retry?");
+        WebSerial.println("Written only " + String(written) + "/" + String(contentLength) + ". Retry?");
       }
     } else {
-      Serial.println("Not enough space for OTA update.");
+      WebSerial.println("Not enough space for OTA update.");
     }
   } else {
-    Serial.println("Failed to download firmware. HTTP Code: " + String(httpCode));
+    WebSerial.println("Failed to download firmware. HTTP Code: " + String(httpCode));
   }
   http.end();
   }
@@ -80,22 +82,22 @@ void checkForUpdates() {
       String newVersion = http.getString();
       newVersion.trim();
       if(debug){
-      Serial.println(String("Branch being used is: ") + otaBranch);
-      Serial.println("Current Version: " + String(currentVersion));
-      Serial.println("Latest Version: " + newVersion);
+      WebSerial.println(String("Branch being used is: ") + otaBranch);
+      WebSerial.println("Current Version: " + String(currentVersion));
+      WebSerial.println("Latest Version: " + newVersion);
     }
-      // Compare versions
-      if (newVersion != currentVersion) {
-        Serial.println("New firmware available. Starting OTA update...");
+      // Compare versions or force update
+      if (newVersion != currentVersion || forceUpdate) {
+        WebSerial.println("New firmware available. Starting OTA update...");
         performOTA();
       } else {
-        Serial.println("Device is already up to date.");
+        WebSerial.println("Device is already up to date.");
       }
     } else {
-      Serial.println("Failed to fetch version file. HTTP Code: " + String(httpCode));
+      WebSerial.println("Failed to fetch version file. HTTP Code: " + String(httpCode));
     }
     http.end();
   } else {
-    Serial.println("WiFi not connected");
+    WebSerial.println("WiFi not connected");
   }
 }

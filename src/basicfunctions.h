@@ -5,7 +5,8 @@
 void initSerial();
 void loadPreferences();
 void clearPreferences();
-
+void enterDeepSleep();
+void enterNap();
 
 
 #endif

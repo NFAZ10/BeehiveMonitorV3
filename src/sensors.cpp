@@ -7,6 +7,7 @@
 #include <Preferences.h>
 #include <ArduinoJson.h>
 #include "variables.h"
+#include "webserialsetup.h"
 
 
 
@@ -30,6 +31,7 @@ extern Preferences prefs;
 
 void tareScale();
 float movingAverage(int newValue);
+void processCommand(String command);
 
 void initDHTSensors() {
     dht1.begin();
@@ -225,4 +227,122 @@ float movingAverage(int newValue) {
 
   // Return the average
   return sum / NUM_SAMPLES;
+}
+
+
+
+void recalibrateScale(float knownWeight) {
+  if(debug) {
+    Serial.println("Recalibration started...");
+    Serial.println("Scale tared.");
+    Serial.println("Place the known weight on the scale.");
+  }
+
+  // 1. Tare the scale
+  LoadCell.tareNoDelay();
+  delay(5000); // Wait for user to place weight
+
+  // 2. Read the raw value
+  float rawValue = LoadCell.getData();
+  if(debug) {
+    Serial.print("Raw value read from HX711: ");
+    Serial.println(rawValue);
+  }
+
+  // 3. Calculate new calibration factor
+  float newCalFactor = rawValue / knownWeight;
+  if(debug) {
+    Serial.print("New Calibration Factor: ");
+    Serial.println(newCalFactor);
+  }
+
+  // 4. Update the calibration factor
+  LoadCell.setCalFactor(newCalFactor);
+
+  // 5. Store the calibration factor
+  prefs.begin("beehive-data");
+  prefs.putFloat("calibrationFactor", newCalFactor);
+  float check = prefs.getFloat("calibrationFactor", NAN);
+  if(debug) {
+    Serial.println(String("CHECK=  ") + check);
+  }
+  prefs.end();
+
+  if(debug) {
+    Serial.println("Calibration factor updated and saved.");
+    Serial.println("Remove the weight.....");
+  }
+  delay(3000);
+}
+
+void handleWebSerialInput(uint8_t *data, size_t len);  // Function to handle WebSerial input
+
+
+
+void handleWebSerialInput(uint8_t *data, size_t len) {
+    String command = "";
+    for (size_t i = 0; i < len; i++) {
+        command += (char)data[i];
+    }
+    command.trim();  // Remove whitespace
+
+    WebSerial.println("Received: " + command);  // Echo back to WebSerial
+    processCommand(command);
+}
+
+// Handles both Serial and WebSerial commands
+void handleSerialCommands() {
+    if (debug && Serial.available()) {
+        String command = Serial.readStringUntil('\n');
+        command.trim();
+        processCommand(command);
+    }
+}
+
+bool waitingForCalibration = false;  // Flag to track calibration input
+float knownWeight = 0;  // Known weight for calibration
+void processCommand(String command) {
+    if (waitingForCalibration) {
+        // User has entered the weight after "CAL" prompt
+            knownWeight = command.toFloat();
+        if (knownWeight > 0) {
+            recalibrateScale(knownWeight);
+            Serial.println("Calibration complete with known weight: " + String(knownWeight));
+            WebSerial.println("Calibration complete with known weight: " + String(knownWeight));
+            waitingForCalibration = false;  // Reset flag
+        } else {
+            Serial.println("Invalid weight. Please enter a valid number.");
+            WebSerial.println("Invalid weight. Please enter a valid number.");
+        }
+        return;  // Exit after handling calibration
+    }
+
+    if (command.startsWith("CAL")) {
+        Serial.println("Enter known weight for calibration:");
+        WebSerial.println("Enter known weight for calibration:");
+        waitingForCalibration = true;  // Set flag to wait for input
+    }
+    else if (command.startsWith("SET")) {
+        calibrationValue = command.substring(3).toFloat();
+        LoadCell.setCalFactor(calibrationValue);
+        Serial.println("Cal Set");
+        WebSerial.println("Cal Set");
+    }else if (command.startsWith("TARE")) {
+        tareScale();
+    }
+    else if (command.startsWith("WEIGHT")) {
+        
+        last_weightstore = command.substring(6).toInt();
+        Serial.println("Weight Set");
+        WebSerial.println("Weight Set");
+    }else {
+        Serial.println("Unknown command");
+        WebSerial.println("Unknown command");
+    }
+
+
+
+
+
+
 }

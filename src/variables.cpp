@@ -5,6 +5,7 @@ bool debug = true;
 bool tareRequested = false;
 bool lowPowerMode = false;
 bool useArduinoCloud = false;
+bool forceUpdate = false;
 
 float h1 = -1, t1 = -1;
 float h2 = -1, t2 = -1;
@@ -15,6 +16,7 @@ float calibrationValue = CALIBRATION_FACTOR;
 float voltageDividerReading = 0.0;
 float voltageCalibrationFactor = 1.31;
 float voltageOffset = 0.0;
+
 
 float vout = 0.0;
 float vin = 0.0;
