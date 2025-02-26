@@ -4,7 +4,12 @@
 
 
 
+
 Preferences prefs;
+
+extern int mVA;
+extern int last_weightstore;
+extern float calibrationValue;
 
 
 void initSerial() {  
@@ -18,8 +23,6 @@ void initSerial() {
     prefs.begin("beehive"),false;
     last_weightstore = prefs.getInt("Weight");
     mVA              = prefs.getFloat("mVA");
-    wifiSSID         = prefs.getString("wifiSSID", "");
-    wifiPassword     = prefs.getString("wifiPassword", "");
     calibrationValue = prefs.getFloat("calibrationFactor", CALIBRATION_FACTOR);
   
     prefs.end();
@@ -28,8 +31,7 @@ void initSerial() {
 
       Serial.println(String("Last Weight=") + last_weightstore);
       Serial.println(String("Last mVA=") + mVA);
-      Serial.println(String("Stored SSID=") + wifiSSID);
-      Serial.println(String("Stored Password=") + wifiPassword);
+
       Serial.println(String("Stored Calibration=") + calibrationValue);
     
   }
