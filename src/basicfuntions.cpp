@@ -1,11 +1,13 @@
 #include <Arduino.h>
 #include <Preferences.h>
 #include "variables.h"
+#include <Adafruit_NeoPixel.h>
 
 
 
 
 Preferences prefs;
+Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 extern int mVA;
 extern int last_weightstore;
@@ -16,7 +18,8 @@ void initSerial() {
       Serial.begin(9600);
       while (!Serial) ; // Wait for Serial if needed
     
-  }
+}
+
 
 
   void loadPreferences() {

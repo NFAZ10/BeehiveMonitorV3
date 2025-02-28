@@ -17,6 +17,7 @@
 #include "sensors.h"
 #include "variables.h"
 #include "ota.h"
+#include "mqtt.h"
 
 /////////////////
 
@@ -31,22 +32,37 @@ bool weightset = false;
 
 
 
-
 void setup() {
+
+    strip.begin();
+    strip.show(); // Turn OFF all pixels ASAP
+    strip.setBrightness(50);
+
     initSerial();
     wmsetup();
     loadPreferences();
     initDHTSensors();
     initScale();
     webserial();
+
+
     WebSerial.println("Starting Hive Monitor...");
-    
+
+    if(WiFi.status() == WL_CONNECTED){
+            // Print the IP address
+        Serial.print("IP Address: ");
+         Serial.println(WiFi.localIP());
+        initMQTT();
+        connectToMQTT();
+    }
+
+
 }
 
 
 
 void loop() {
-    handleSerialCommands();
+    
     readDHTSensors();
     updateScale();
     measureBattery();
@@ -60,7 +76,80 @@ void loop() {
     WebSerial.println("Humidity1: " + String(h1));delay(100);
     WebSerial.println("Humidity2: " + String(h2));delay(100);
     WebSerial.println("//////////////////////////////////////////");delay(100);
+    WebSerial.println(String("Tare Status: ") + tareRequested);delay(100);
     WebSerial.loop();
-    
+
+    // Check for tare request
+    if(tareRequested==true) {
+        tareScale();
+        tareRequested = false;
+    }
+
+
+
+
+    if (WiFi.status() == WL_CONNECTED) {
+        if (!mqttClient.connected()) {
+      //connectToMQTT();
+    }
+    strip.setPixelColor(0,0,255,0); //  Set pixel's color (in RAM)
+    strip.show();
+      mqttClient.loop();
+  
+      if (millis() - lastPublishTime >= publishInterval) {
+        uint8_t mac[6];
+        WiFi.macAddress(mac);
+        char macStr[13];
+        snprintf(macStr, sizeof(macStr), "%02X%02X%02X%02X", mac[2], mac[3], mac[4], mac[5]);
+        String topicBase = "beehive/data/";
+        topicBase += macStr; // Get the last 4 digits of the MAC address
+  
+        mqttClient.publish((topicBase + "/temperature1").c_str(), String(t1).c_str());
+        delay(1000);
+        mqttClient.publish((topicBase + "/humidity1").c_str(), String(h1).c_str());
+        delay(1000);
+        mqttClient.publish((topicBase + "/temperature2").c_str(), String(t2).c_str());
+        delay(1000);
+        mqttClient.publish((topicBase + "/humidity2").c_str(), String(h2).c_str());
+        delay(1000);
+        mqttClient.publish((topicBase + "/weight").c_str(), String(grams).c_str());
+        delay(1000);
+        mqttClient.publish((topicBase + "/battery").c_str(), String(voltageDividerReading).c_str());
+        delay(1000);
+        mqttClient.publish((topicBase + "/version").c_str(), String(currentVersion).c_str());
+        delay(1000);
+        mqttClient.publish((topicBase + "/mva").c_str(), String(mVA).c_str());
+        delay(1000);
+        mqttClient.publish((topicBase + "/lbs").c_str(), String(weightInPounds).c_str());
+        delay(1000);
+
+  
+        lastPublishTime = millis(); // Update the last publish time
+        Serial.println(topicBase);
+        if (debug) {
+          Serial.println("Published data to MQTT:");
+          Serial.println("temperature1: " + String(t1));
+          Serial.println("humidity1: " + String(h1));
+          Serial.println("temperature2: " + String(t2));
+          Serial.println("humidity2: " + String(h2));
+          Serial.println("weight: " + String(grams));
+          Serial.println("battery: " + String(voltageDividerReading));
+          Serial.println("version: " + String(currentVersion));
+          Serial.println("mva: " + String(mVA));
+          Serial.println("lbs: " + String(weightInPounds));
+
+        }
+      }
+    }
+
+
+    if (battery > 4.0 || battery == 0) {
+        enterNap();
+    } else {
+        enterDeepSleep();
+    }
+
+
+
 }
 

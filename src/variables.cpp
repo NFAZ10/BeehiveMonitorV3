@@ -30,9 +30,9 @@ const char* DEVversionURL = "https://raw.githubusercontent.com/NFAZ10/HiveMonito
 const char* DEVfirmwareURL = "https://raw.githubusercontent.com/NFAZ10/HiveMonitor/dev/.pio/build/esp32dev/firmware.bin";
 const char* DEVcurrentVersion = "1.2.3DEV";
 
-const char* MAINversionURL = "https://raw.githubusercontent.com/NFAZ10/HiveMonitorV3/refs/heads/main/src/version.txt";
-const char* MAINfirmwareURL = "https://raw.githubusercontent.com/NFAZ10/HiveMonitorV3/main/.pio/build/esp32dev/firmware.bin";
-const char* MAINcurrentVersion = "3.0.0";
+const char* MAINversionURL = "https://raw.githubusercontent.com/NFAZ10/BeehiveMonitorV3/refs/heads/main/version.txt";
+const char* MAINfirmwareURL = "https://raw.githubusercontent.com/NFAZ10/BeehiveMonitorV3/main/.pio/build/esp32dev/firmware.bin";
+const char* MAINcurrentVersion = "3.0.1";
 
 const char* versionURL;
 const char* firmwareURL;
