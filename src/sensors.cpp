@@ -11,9 +11,7 @@
 
 
 
-
-Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
-
+extern Adafruit_NeoPixel strip;
 
 DHT dht1(27, DHT11);
 DHT dht2(26, DHT11);
@@ -29,14 +27,58 @@ extern float mVA;
 extern bool weightset;
 extern Preferences prefs;
 
-void tareScale();
-float movingAverage(int newValue);
-void processCommand(String command);
 
 void initDHTSensors() {
     dht1.begin();
     dht2.begin();
   }
+
+
+  void tareScale() {
+    // Start the tare process
+    WebSerial.println("Tare started...");
+    LoadCell.update();
+  
+     LoadCell.refreshDataSet();
+     LoadCell.resetSamplesIndex();
+     //LoadCell.setTareOffset(0);
+  
+  
+    LoadCell.tareNoDelay();
+    
+      Serial.println("Tare started...");
+    
+  
+    // Reset variables after taring
+    grams  = 0;
+    mVA    = 0;
+    weight = 0;
+    last_weightstore = 0;
+    prefs.begin("beehive-data",false);
+    prefs.putInt("lastWeight", grams);
+    prefs.putInt("Weight", grams);
+    prefs.putFloat("mVA", mVA);
+    prefs.end();
+  
+  
+  
+      WebSerial.println("Tare completed:");
+      WebSerial.println("Raw Grams: 0");
+      WebSerial.println("Moving Avg Grams: 0");
+      WebSerial.println("Weight (oz): 0");
+    
+  
+  
+  
+    
+      Serial.println("Rebooting after tare...");
+    
+    delay(500); // Allow Serial message to complete
+    weightset=false;
+    //ESP.restart(); // Reboot the ESP
+  }
+  
+
 
   void initScale() {
 
@@ -73,52 +115,26 @@ void initDHTSensors() {
 
 
 
-
-  void tareScale() {
-    // Start the tare process
   
-    LoadCell.update();
-  
-     LoadCell.refreshDataSet();
-     LoadCell.resetSamplesIndex();
-     //LoadCell.setTareOffset(0);
+  float movingAverage(int newValue) {
+    static float readings[NUM_SAMPLES] = {0};
+    static int   index = 0;
+    static float sum   = 0;
   
   
-    LoadCell.tareNoDelay();
-    if(debug) {
-      Serial.println("Tare started...");
-    }
+    // Subtract the oldest reading from sum
+    sum -= readings[index];
   
-    // Reset variables after taring
-    grams  = 0;
-    mVA    = 0;
-    weight = 0;
-    prefs.begin("beehive-data",false);
-    prefs.putInt("lastWeight", grams);
-    prefs.putInt("Weight", grams);
-    prefs.putFloat("mVA", mVA);
-    prefs.end();
+    // Store the new reading
+    readings[index] = newValue;
+    sum += newValue;
   
+    // Advance the index, wrapping around
+    index = (index + 1) % NUM_SAMPLES;
   
-  
-    if(debug) {
-      Serial.println("Tare completed:");
-      Serial.println("Raw Grams: 0");
-      Serial.println("Moving Avg Grams: 0");
-      Serial.println("Weight (oz): 0");
-    }
-  
-  
-  
-    if(debug) {
-      Serial.println("Rebooting after tare...");
-    }
-    delay(500); // Allow Serial message to complete
-    weightset=false;
-    //ESP.restart(); // Reboot the ESP
+    // Return the average
+    return sum / NUM_SAMPLES;
   }
-  
-  
   
 
   
@@ -165,10 +181,11 @@ void measureBattery() {
 
 void updateScale() {
   static bool newDataReady = false;
-  int sampleCount = 10;
+  int sampleCount = 100;
   int total = 0 ;
 if(debug){
 Serial.println("Reading Scale");
+WebSerial.println("Reading Scale");
       strip.setPixelColor(0,255,255,15); //  Set pixel's color (in RAM)
       strip.show();
 
@@ -177,8 +194,8 @@ Serial.println("Reading Scale");
  
    for (int i = 0; i < sampleCount; i++) {
     while (!LoadCell.update()) {
-      //Serial.print("Reading Scale:  ");
-      //Serial.println(LoadCell.getData());
+      Serial.print("Reading Scale:  ");
+      Serial.println(LoadCell.getData());
     }
     total += LoadCell.getData();
    // Serial.println(String("Raw Data: ") + LoadCell.getData()*calibrationValue);
@@ -187,11 +204,11 @@ Serial.println("Reading Scale");
        //Serial.print(String("Total: ") + total); Serial.println(String(" || SampleCount: ") + sampleCount);
       
       grams= total/sampleCount;
-      Serial.println(String("Last Weight: ") + last_weightstore);
+      WebSerial.println(String("Last Weight: ") + last_weightstore);
       grams=grams+last_weightstore; //set offset from last weight
 
       if(grams < 0){
-        Serial.println("Negative Weight Detected. Taring...");
+        WebSerial.println("Negative Weight Detected. Taring...");
         grams = 0;
        
         tareScale();
@@ -200,34 +217,16 @@ Serial.println("Reading Scale");
       //grams=LoadCell.getData();
 
   mVA= movingAverage(grams);
-  Serial.println(String("Grams: ") + grams);
+  WebSerial.println(String("mVA: ") + mVA);
+  WebSerial.println(String("Grams: ") + grams);
   // Convert grams to pounds (1 gram = 0.00220462 pounds)
   weightInPounds = grams * 0.00220462;
-  Serial.println(String("Weight in Pounds: ") + weightInPounds);
+  WebSerial.println(String("Weight in Pounds: ") + weightInPounds);
     
       strip.setPixelColor(0,0,0,0); //  Set pixel's color (in RAM)
       strip.show();
 }
 
-float movingAverage(int newValue) {
-  static float readings[NUM_SAMPLES] = {0};
-  static int   index = 0;
-  static float sum   = 0;
-
-
-  // Subtract the oldest reading from sum
-  sum -= readings[index];
-
-  // Store the new reading
-  readings[index] = newValue;
-  sum += newValue;
-
-  // Advance the index, wrapping around
-  index = (index + 1) % NUM_SAMPLES;
-
-  // Return the average
-  return sum / NUM_SAMPLES;
-}
 
 
 
@@ -275,74 +274,4 @@ void recalibrateScale(float knownWeight) {
   delay(3000);
 }
 
-void handleWebSerialInput(uint8_t *data, size_t len);  // Function to handle WebSerial input
 
-
-
-void handleWebSerialInput(uint8_t *data, size_t len) {
-    String command = "";
-    for (size_t i = 0; i < len; i++) {
-        command += (char)data[i];
-    }
-    command.trim();  // Remove whitespace
-
-    WebSerial.println("Received: " + command);  // Echo back to WebSerial
-    processCommand(command);
-}
-
-// Handles both Serial and WebSerial commands
-void handleSerialCommands() {
-    if (debug && Serial.available()) {
-        String command = Serial.readStringUntil('\n');
-        command.trim();
-        processCommand(command);
-    }
-}
-
-bool waitingForCalibration = false;  // Flag to track calibration input
-float knownWeight = 0;  // Known weight for calibration
-void processCommand(String command) {
-    if (waitingForCalibration) {
-        // User has entered the weight after "CAL" prompt
-            knownWeight = command.toFloat();
-        if (knownWeight > 0) {
-            recalibrateScale(knownWeight);
-            Serial.println("Calibration complete with known weight: " + String(knownWeight));
-            WebSerial.println("Calibration complete with known weight: " + String(knownWeight));
-            waitingForCalibration = false;  // Reset flag
-        } else {
-            Serial.println("Invalid weight. Please enter a valid number.");
-            WebSerial.println("Invalid weight. Please enter a valid number.");
-        }
-        return;  // Exit after handling calibration
-    }
-
-    if (command.startsWith("CAL")) {
-        Serial.println("Enter known weight for calibration:");
-        WebSerial.println("Enter known weight for calibration:");
-        waitingForCalibration = true;  // Set flag to wait for input
-    }
-    else if (command.startsWith("SET")) {
-        calibrationValue = command.substring(3).toFloat();
-        LoadCell.setCalFactor(calibrationValue);
-        Serial.println("Cal Set");
-        WebSerial.println("Cal Set");
-    }else if (command.startsWith("TARE")) {
-        tareScale();
-    }
-    else if (command.startsWith("WEIGHT")) {
-        
-        last_weightstore = command.substring(6).toInt();
-        Serial.println("Weight Set");
-        WebSerial.println("Weight Set");
-    }else {
-        Serial.println("Unknown command");
-        WebSerial.println("Unknown command");
-    }
-
-
-
-
-
-
-}
