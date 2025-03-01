@@ -11,7 +11,7 @@
 #define CALIBRATION_FACTOR     29.17 // Default calibration factor
 #define SLEEP_INTERVAL_LOW_POWER 21600 // 6 hours
 #define SLEEP_INTERVAL_NORMAL    3600  // 1 hour
-#define LED_PIN    12
+#define LED_PIN    15
 #define LED_COUNT 1
 
 // Global variable declarations (extern)
@@ -21,6 +21,7 @@ extern bool lowPowerMode;
 extern bool useArduinoCloud;
 extern bool forceUpdate;
 extern bool weightset;
+extern bool disablesleep;
 
 extern float h1, t1;
 extern float h2, t2;

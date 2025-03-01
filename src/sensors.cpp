@@ -89,7 +89,7 @@ void initDHTSensors() {
   
   
     unsigned long stabilizingtime = 2000; // preciscion right after power-up can be improved by adding a few seconds of stabilizing time
-    boolean _tare = true; //set this to false if you don't want tare to be performed in the next step
+    boolean _tare = false; //set this to false if you don't want tare to be performed in the next step
     LoadCell.start(stabilizingtime, _tare);
     if (LoadCell.getTareTimeoutFlag()) {
       Serial.println("Timeout, check MCU>HX711 wiring and pin designations");

@@ -54,9 +54,9 @@ void recvMsg(uint8_t *data, size_t len) {
       debug = !debug;
       WebSerial.println("Debug Set");
     } else if(msg == "sleep") {
-     // enterDeepSleep();
-    } else if(msg == "nap") {
-     // enterNap();
+     disablesleep = false;
+    } else if(msg == "wake") {
+     disablesleep = true;
     } else if(msg == "wifi") {
      // connectToWiFi();
     } else if(msg == "ap") {
