@@ -4,6 +4,7 @@
 #include <HX711_ADC.h>
 #include <Preferences.h>
 #include "basicfunctions.h"
+#include "ota.h"
 
 
 AsyncWebServer server(80);  // Define WebServer instance
@@ -57,7 +58,8 @@ void recvMsg(uint8_t *data, size_t len) {
      disablesleep = false;
     } else if(msg == "wake") {
      disablesleep = true;
-    } else if(msg == "wifi") {
+    } else if(msg == "otaforce") {
+        performOTA();
      // connectToWiFi();
     } else if(msg == "ap") {
      // createAccessPointIfNeeded();
