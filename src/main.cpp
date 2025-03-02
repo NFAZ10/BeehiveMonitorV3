@@ -141,12 +141,10 @@ void setup() {
     strip.setPixelColor(0,10,0,0);
     strip.show(); //  strip.show(); // 
      if(disablesleep == false){
-        if (battery > 4.0 || battery == 0) {
-   //  strip.show(); // 
-            enterLightSleep(60);
-         }else if(battery > 4.15){
+         if(battery > 4.15){
             strip.setPixelColor(0,100,0,0);
             strip.show();
+            WebSerial.println("Battery is above 4.15V. Entering Loop State.");
          }
          else {
              enterDeepSleep(3600);
@@ -223,6 +221,33 @@ void loop(){
         
       
     }
+    WebSerial.println(String("Disable Sleep: ") + disablesleep);
 
-    enterLightSleep(60);
+        // Check for tare request
+        if(tareRequested==true) {
+            tareScale();
+            tareRequested = false;
+        }
+
+        if (disablesleep == false) {
+            if(battery > 4.15){
+                WebSerial.println("Battery is above 4.15V. Entering Loop State.");
+                strip.setPixelColor(0,100,0,0);
+            }else if (battery<4.15 && battery>3.7){
+                WebSerial.println("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
+                enterLightSleep(1800);
+            }
+            else if (battery<3.7 && battery > 3.5 ){
+                WebSerial.println("Battery is below 3.7V. Entering Deep Sleep for 1 Hour.");
+                enterDeepSleep(3600);
+            }else{
+                WebSerial.println("Battery is below 3.5V. Entering Deep Sleep for 2 Hour.");
+                enterDeepSleep(7200);
+            }
+        }
+        else {
+            strip.setPixelColor(0,0,0,0);
+            strip.show();
+        }
+ delay(1000);
 }

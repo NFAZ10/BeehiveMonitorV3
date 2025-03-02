@@ -210,4 +210,4 @@
  .pio/libdeps/esp32dev/HX711_ADC/src/config.h src/variables.h \
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/Preferences/src/Preferences.h \
  src/basicfunctions.h \
- .pio/libdeps/esp32dev/Adafruit\ NeoPixel/Adafruit_NeoPixel.h
+ .pio/libdeps/esp32dev/Adafruit\ NeoPixel/Adafruit_NeoPixel.h src/ota.h
