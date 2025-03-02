@@ -54,31 +54,47 @@ void initSerial() {
 
 
   
-void enterDeepSleep() {
-  if(debug) {
-    Serial.println("Entering deep sleep for 30  minutes...");
-  }
-  // Convert time from minutes to microseconds
-  int timeInMicroseconds = 30 * 60 * 1000000;
-  // Configure the wake-up source as a timer
-  esp_sleep_enable_timer_wakeup(timeInMicroseconds);
-  delay(1000);
-  // Enter deep sleep mode
-  esp_deep_sleep_start();
-  delay(1000);
-}
 
-void enterNap() {
-  if(debug) {
-    Serial.println("Entering deep sleep for 1 minutes...");
+  #define HX711_CLK  5  // Change to your actual HX711 clock pin
+  #define HX711_DATA 18  // Change to your actual HX711 data pin
+  
+  void enterDeepSleep(uint64_t sleepTimeSeconds) {
+      Serial.println("Powering down HX711...");
+      
+      // Set HX711 into power-down mode (Clock HIGH)
+      digitalWrite(HX711_CLK, HIGH);
+      delayMicroseconds(100); // Ensure power-down command is sent
+  
+      Serial.println("Entering Deep Sleep...");
+  
+      // Convert seconds to microseconds
+      uint64_t sleepTimeMicroseconds = sleepTimeSeconds * 1000000ULL;
+  
+      // Enable wake-up timer
+      esp_sleep_enable_timer_wakeup(sleepTimeMicroseconds);
+  
+      // Go to sleep
+      esp_deep_sleep_start();
   }
-  // Convert time from minutes to microseconds
-  int timeInMicroseconds = 1 * 60 * 1000000;
-  // Configure the wake-up source as a timer
-  esp_sleep_enable_timer_wakeup(timeInMicroseconds);
-  delay(1000);
-  // Enter deep sleep mode
-  esp_deep_sleep_start();
-  delay(1000);
+
+  void enterLightSleep(uint64_t sleepTimeSeconds) {
+    Serial.println("Powering down HX711...");
+    
+    // Set HX711 into power-down mode (Clock HIGH)
+    digitalWrite(HX711_CLK, HIGH);
+    delayMicroseconds(100); // Ensure power-down command is sent
+
+    Serial.println("Entering Light Sleep...");
+
+    // Convert seconds to microseconds
+    uint64_t sleepTimeMicroseconds = sleepTimeSeconds * 1000000ULL;
+
+    // Enable wake-up timer
+    esp_sleep_enable_timer_wakeup(sleepTimeMicroseconds);
+
+    // Start light sleep
+    esp_light_sleep_start();
+
+    Serial.println("Woke up from Light Sleep");
 }
   

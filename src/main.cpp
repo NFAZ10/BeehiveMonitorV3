@@ -143,13 +143,13 @@ void setup() {
      if(disablesleep == false){
         if (battery > 4.0 || battery == 0) {
    //  strip.show(); // 
-             enterNap();
+            enterLightSleep(60);
          }else if(battery > 4.15){
             strip.setPixelColor(0,100,0,0);
             strip.show();
          }
          else {
-             enterDeepSleep();
+             enterDeepSleep(3600);
          }
         }
 }
@@ -178,7 +178,7 @@ void loop(){
     strip.show();
       mqttClient.loop();
   
-      if (millis() - lastPublishTime >= publishInterval) {
+      
         uint8_t mac[6];
         WiFi.macAddress(mac);
         char macStr[13];
@@ -221,9 +221,8 @@ void loop(){
           Serial.println("lbs: " + String(weightInPounds));
 
         
-      }
+      
     }
 
-    delay(60000);   
-
+    enterLightSleep(60);
 }

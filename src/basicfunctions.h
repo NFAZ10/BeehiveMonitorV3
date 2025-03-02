@@ -6,8 +6,9 @@
 void initSerial();
 void loadPreferences();
 void clearPreferences();
-void enterDeepSleep();
-void enterNap();
+  
+void enterDeepSleep(uint64_t sleepTimeSeconds);
+void enterLightSleep(uint64_t sleepTimeSeconds);
 
 extern Adafruit_NeoPixel strip;
 
