@@ -73,6 +73,7 @@ void loop(){
         Serial.println("Tare Button Pressed");
         delay(1000);
     }
+    Serial.println(String("Tare Button Status: ") + TARE_BUTTON_PIN);
 
     readDHTSensors();
     updateScale();
@@ -87,6 +88,7 @@ void loop(){
     WebSerial.println("Temp2: " + String(temp2));delay(1000);
     WebSerial.println("Humidity1: " + String(h1));delay(1000);
     WebSerial.println("Humidity2: " + String(h2));delay(1000);
+    WebSerial.println("Version: " + String(currentVersion));delay(1000);
     WebSerial.println("//////////////////////////////////////////");delay(1000);
     WebSerial.println(String("Tare Status: ") + tareRequested);delay(1000);
     
