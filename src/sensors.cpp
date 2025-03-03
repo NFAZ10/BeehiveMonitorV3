@@ -37,6 +37,15 @@ void initDHTSensors() {
   void tareScale() {
     // Start the tare process
     WebSerial.println("Tare started...");
+    strip.setPixelColor(0,255,255,255); //  Set pixel's color (in RAM)
+    strip.show();
+    delay(1000);
+    strip.setPixelColor(0,255,255,0); //  Set pixel's color (in RAM)
+    strip.show();
+    delay(1000);
+    strip.setPixelColor(0,255,255,255); //  Set pixel's color (in RAM)
+    strip.show();
+
     LoadCell.update();
   
      LoadCell.refreshDataSet();
@@ -76,6 +85,8 @@ void initDHTSensors() {
     delay(500); // Allow Serial message to complete
     weightset=false;
     //ESP.restart(); // Reboot the ESP
+    strip.setPixelColor(0,0,255,0); //  Set pixel's color (in RAM)
+    strip.show();
   }
   
 
@@ -188,14 +199,17 @@ Serial.println("Reading Scale");
 WebSerial.println("Reading Scale");
       strip.setPixelColor(0,255,255,15); //  Set pixel's color (in RAM)
       strip.show();
+      delay(1000);
+      strip.setPixelColor(0,0,255,255); //  Set pixel's color (in RAM)
+      strip.show();
 
 
 }
  
    for (int i = 0; i < sampleCount; i++) {
     while (!LoadCell.update()) {
-    //  Serial.print("Reading Scale:  ");
-    //  Serial.println(LoadCell.getData());
+      //Serial.print("Reading Scale:  ");
+      //Serial.println(LoadCell.getData());
     }
     total += LoadCell.getData();
    // Serial.println(String("Raw Data: ") + LoadCell.getData()*calibrationValue);
@@ -208,10 +222,10 @@ WebSerial.println("Reading Scale");
       grams=grams+last_weightstore; //set offset from last weight
 
       if(grams < 0){
-        WebSerial.println("Negative Weight Detected. Taring...");
+        WebSerial.println("Negative Weight Detected. Zeroing...");
         grams = 0;
-       
-        tareScale();
+        strip.setPixelColor(0,255,0,0); //  Set pixel's color (in RAM)
+        strip.show();
       }
    
       //grams=LoadCell.getData();
@@ -222,9 +236,12 @@ WebSerial.println("Reading Scale");
   // Convert grams to pounds (1 gram = 0.00220462 pounds)
   weightInPounds = grams * 0.00220462;
   WebSerial.println(String("Weight in Pounds: ") + weightInPounds);
+  prefs.begin("beehive",false);
+  prefs.putInt("Weight",grams);
+  prefs.end();
     
-      strip.setPixelColor(0,0,0,0); //  Set pixel's color (in RAM)
-      strip.show();
+  strip.setPixelColor(0,0,0,0); //  Set pixel's color (in RAM)
+  strip.show();
 }
 
 

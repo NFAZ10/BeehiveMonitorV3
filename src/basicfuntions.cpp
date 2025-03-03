@@ -28,18 +28,17 @@ void initSerial() {
     prefs.begin("beehive"),false;
     last_weightstore = prefs.getInt("Weight");
     mVA              = prefs.getFloat("mVA");
-    calibrationValue = prefs.getFloat("calibrationFactor", CALIBRATION_FACTOR);
-  
     prefs.end();
-  
-  
 
       Serial.println(String("Last Weight=") + last_weightstore);
       Serial.println(String("Last mVA=") + mVA);
-
       Serial.println(String("Stored Calibration=") + calibrationValue);
     
   }
+
+
+  
+
   
   void clearPreferences() {
     prefs.begin("beehive",false);
@@ -98,5 +97,6 @@ void initSerial() {
     esp_light_sleep_start();
     wmsetup();
     Serial.println("Woke up from Light Sleep");
+    delay(2000);
 }
   

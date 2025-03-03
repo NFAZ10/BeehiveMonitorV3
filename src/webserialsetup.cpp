@@ -11,7 +11,6 @@ AsyncWebServer server(80);  // Define WebServer instance
 
 extern Preferences prefs;
 
-
 void recvMsg(uint8_t *data, size_t len) {
     WebSerial.println("Received Data...");
   

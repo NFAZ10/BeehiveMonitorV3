@@ -32,25 +32,25 @@ void performOTA() {
       size_t written = Update.writeStream(*stream);
 
       if (written == contentLength) {
-        WebSerial.println("Firmware written successfully. Rebooting...");
+        Serial.println("Firmware written successfully. Rebooting...");
         if (Update.end()) {
           if (Update.isFinished()) {
-            WebSerial.println("Update successful. Rebooting...");
+            Serial.println("Update successful. Rebooting...");
             ESP.restart();
           } else {
-            WebSerial.println("Update not finished. Something went wrong.");
+            Serial.println("Update not finished. Something went wrong.");
           }
         } else {
-          WebSerial.println("Update failed. Error #: " + String(Update.getError()));
+          Serial.println("Update failed. Error #: " + String(Update.getError()));
         }
       } else {
-        WebSerial.println("Written only " + String(written) + "/" + String(contentLength) + ". Retry?");
+        Serial.println("Written only " + String(written) + "/" + String(contentLength) + ". Retry?");
       }
     } else {
-      WebSerial.println("Not enough space for OTA update.");
+      Serial.println("Not enough space for OTA update.");
     }
   } else {
-    WebSerial.println("Failed to download firmware. HTTP Code: " + String(httpCode));
+    Serial.println("Failed to download firmware. HTTP Code: " + String(httpCode));
   }
   http.end();
   }
@@ -82,22 +82,22 @@ void checkForUpdates() {
       String newVersion = http.getString();
       newVersion.trim();
       if(debug){
-      WebSerial.println(String("Branch being used is: ") + otaBranch);
-      WebSerial.println("Current Version: " + String(currentVersion));
-      WebSerial.println("Latest Version: " + newVersion);
+      Serial.println(String("Branch being used is: ") + otaBranch);
+      Serial.println("Current Version: " + String(currentVersion));
+      Serial.println("Latest Version: " + newVersion);
     }
       // Compare versions or force update
       if (newVersion != currentVersion || forceUpdate) {
-        WebSerial.println("New firmware available. Starting OTA update...");
+        Serial.println("New firmware available. Starting OTA update...");
         performOTA();
       } else {
-        WebSerial.println("Device is already up to date.");
+        Serial.println("Device is already up to date.");
       }
     } else {
-      WebSerial.println("Failed to fetch version file. HTTP Code: " + String(httpCode));
+      Serial.println("Failed to fetch version file. HTTP Code: " + String(httpCode));
     }
     http.end();
   } else {
-    WebSerial.println("WiFi not connected");
+    Serial.println("WiFi not connected");
   }
 }

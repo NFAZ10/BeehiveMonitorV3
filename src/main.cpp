@@ -18,7 +18,7 @@
 #include "variables.h"
 #include "ota.h"
 #include "mqtt.h"
-
+#include <Preferences.h>
 /////////////////
 
 float battery = 0.0;
@@ -30,10 +30,10 @@ int counter = 0;
 float mVA;
 bool weightset = false;
 
-
+Preferences pref;
 
 void setup() {
-
+    pinMode(TARE_BUTTON_PIN, INPUT_PULLUP);
     strip.begin();
     strip.show(); // Turn OFF all pixels ASAP
     strip.setBrightness(50);
@@ -44,49 +44,61 @@ void setup() {
     initDHTSensors();
     initScale();
     measureBattery();
-
+    WebSerial.println("Checking Battery Level");
+    Serial.println("Checking Battery Level");
      if(disablesleep == false){
-         if(battery > 3.5){
+         if(battery > 3.5 || battery == 0){
+            WebSerial.println("Starting Wifi Setup");
+            Serial.println("Starting Wifi Setup");
             strip.setPixelColor(0,100,0,0);
             strip.show();
             wmsetup();
             webserial();
             initMQTT();
+
             WebSerial.println("Battery is above 3.5V. Entering Loop State.");
 
          }
-         else if (battery<3.5){
+         else if (battery<3.5 && battery > 0){
              enterDeepSleep(3600);
          }
         }
 }
 
 void loop(){
+    WebSerial.loop();
 
+    while(TARE_BUTTON_PIN == LOW){
+        tareRequested = true;
+        Serial.println("Tare Button Pressed");
+        delay(1000);
+    }
 
     readDHTSensors();
     updateScale();
     measureBattery();
     checkForUpdates();
-    WebSerial.println("//////////////////LOOP////////////////");delay(100);
-    WebSerial.println("Battery: " + String(battery));delay(100);
-    WebSerial.println("Weight: " + String(weightInPounds));delay(100);
-    WebSerial.println("Temp1: " + String(temp1));delay(100);
-    WebSerial.println("Temp2: " + String(temp2));delay(100);
-    WebSerial.println("Humidity1: " + String(h1));delay(100);
-    WebSerial.println("Humidity2: " + String(h2));delay(100);
-    WebSerial.println("//////////////////////////////////////////");delay(100);
-    WebSerial.println(String("Tare Status: ") + tareRequested);delay(100);
-    WebSerial.loop();
+
+
+    WebSerial.println("//////////////////LOOP////////////////");delay(1000);
+    WebSerial.println("Battery: " + String(battery));delay(1000);
+    WebSerial.println("Weight: " + String(weightInPounds));delay(1000);
+    WebSerial.println("Temp1: " + String(temp1));delay(1000);
+    WebSerial.println("Temp2: " + String(temp2));delay(1000);
+    WebSerial.println("Humidity1: " + String(h1));delay(1000);
+    WebSerial.println("Humidity2: " + String(h2));delay(1000);
+    WebSerial.println("//////////////////////////////////////////");delay(1000);
+    WebSerial.println(String("Tare Status: ") + tareRequested);delay(1000);
+    
 
     if (WiFi.status() == WL_CONNECTED) {
         if (!mqttClient.connected()) {
             checkForUpdates();
-      connectToMQTT();
+            connectToMQTT();
     }
-    strip.setPixelColor(0,0,255,0); //  Set pixel's color (in RAM)
-    strip.show();
-      mqttClient.loop();
+        strip.setPixelColor(0,0,255,0); //  Set pixel's color (in RAM)
+        strip.show();
+         mqttClient.loop();
   
       
         uint8_t mac[6];
@@ -135,6 +147,8 @@ void loop(){
         
       
     }
+
+
     WebSerial.println(String("Disable Sleep: ") + disablesleep);
     Serial.println(String("Disable Sleep: ") + disablesleep);
         // Check for tare request
@@ -142,26 +156,38 @@ void loop(){
             tareScale();
             tareRequested = false;
         }
+        pref.begin("beehive",false);
+        int weighttest= pref.getInt("Weight", 0);
+        WebSerial.println(String("Weight Test:  ")+weight);
+        pref.end();  
 
         if (disablesleep == false) {
             if(battery > 4.15){
-                WebSerial.println("Battery is above 4.15V. Entering Loop State.");
-                Serial.println("Battery is above 4.15V. Entering Loop State.");
-                strip.setPixelColor(0,100,0,0);
+                WebSerial.println("Battery is above 4.15V. Restarting Loop.");
+                Serial.println("Battery is above 4.15V. Restarting Loop.");
+                strip.setPixelColor(0,0,255,0);strip.show();
             }else if (battery<4.15 && battery>3.7){
                 WebSerial.println("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
                 Serial.println("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
+                strip.setPixelColor(0,0,0,75);strip.show();
                 delay(1000);
-                enterLightSleep(30);
+                enterLightSleep(1800);
             }
             else if (battery<3.7 && battery > 3.5 ){
                 WebSerial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
                 Serial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
+                strip.setPixelColor(0,0,0,255);strip.show();
+                delay(1000);
+                strip.setPixelColor(0,0,0,0);strip.show();
                 delay(1000);
                 enterLightSleep(3600);
             }else{
                 WebSerial.println("Battery is below 3.5V. Entering Deep Sleep for 2 Hour.");
                 Serial.println("Battery is below 3.5V. Entering Deep Sleep for 2 Hour.");
+                strip.setPixelColor(0,255,0,0);strip.show();
+                delay(1000);
+                strip.setPixelColor(0,0,0,0);strip.show();
+                delay(1000);
                 delay(1000);
                 enterDeepSleep(7200);
             }
@@ -172,3 +198,4 @@ void loop(){
         }
  delay(1000);
 }
+

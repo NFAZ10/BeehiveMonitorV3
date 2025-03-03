@@ -206,4 +206,5 @@
  .pio/libdeps/esp32dev/ESPAsyncWebServer/src/AsyncWebSocket.h \
  .pio/libdeps/esp32dev/ESPAsyncWebServer/src/WebHandlerImpl.h \
  .pio/libdeps/esp32dev/ESPAsyncWebServer/src/WebResponseImpl.h \
- C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/StreamString.h
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/StreamString.h \
+ .pio/libdeps/esp32dev/Adafruit\ NeoPixel/Adafruit_NeoPixel.h
