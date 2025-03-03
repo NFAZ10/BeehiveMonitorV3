@@ -20,21 +20,37 @@ void initMQTT() {
 
 }
 
+#include <WiFi.h>  // Ensure WiFi library is included
+#include <Arduino.h>
+
 void connectToMQTT() {
-  while (!mqttClient.connected()) {
-    Serial.print("Connecting to MQTT...");
-    String clientId = "ESP32Client-" + String(WiFi.macAddress());
-    if (mqttClient.connect(clientId.c_str(), mqttUser, mqttPassword)) {
-      Serial.println("connected");
-      // Subscribe to the tare topic
-      String topicBase = "beehive/data/" + String(WiFi.macAddress()) + "/cmd";
-      mqttClient.subscribe(topicBase.c_str());
-      Serial.println("Subscribed to topic: " + topicBase);
-    } else {
-      Serial.print("failed, rc=");
-      Serial.print(mqttClient.state());
-      Serial.println(" try again in 5 seconds");
-      delay(5000);
+    int retryCount = 0;
+    const int maxRetries = 10;
+
+    while (!mqttClient.connected()) {
+        Serial.print("Connecting to MQTT...");
+        
+       
+        if (mqttClient.connect("clientId")) {
+            Serial.println("connected");
+
+            // Subscribe to the tare topic
+            String topicBase = "beehive/data/" + String(WiFi.macAddress()) + "/cmd";
+            mqttClient.subscribe(topicBase.c_str());
+            Serial.println("Subscribed to topic: " + topicBase);
+            return;
+        } else {
+            Serial.print("failed, rc=");
+            Serial.print(mqttClient.state());
+            Serial.println(" try again in 5 seconds");
+
+            retryCount++;
+            if (retryCount >= maxRetries && WiFi.status() == WL_CONNECTED) {
+                Serial.println("Max retries reached, rebooting...");
+                delay(1000);
+                ESP.restart();
+            }
+            delay(5000);
+        }
     }
-  }
 }

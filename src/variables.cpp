@@ -33,15 +33,14 @@ const char* DEVcurrentVersion = "1.2.3DEV";
 
 const char* MAINversionURL = "https://raw.githubusercontent.com/NFAZ10/BeehiveMonitorV3/refs/heads/main/version.txt";
 const char* MAINfirmwareURL = "https://raw.githubusercontent.com/NFAZ10/BeehiveMonitorV3/main/.pio/build/esp32dev/firmware.bin";
-const char* MAINcurrentVersion = "3.0.5";
+const char* MAINcurrentVersion = "3.0.6";
 
 const char* versionURL;
 const char* firmwareURL;
 const char* currentVersion;
 
-// MQTT Server Details
+// MQTT Server Detail
 const char* mqttServer = "mqtt.beehivemonitor.com";
-const int mqttPort = 4116;
 const char* mqttUser = "Hivelogin";
 const char* mqttPassword = "824656789";
 

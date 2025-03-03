@@ -4,7 +4,7 @@
 #include <Adafruit_NeoPixel.h>
 #include <WiFi.h>
 #include <esp_wifi.h>
-
+#include "wifisetup.h"
 
 
 
@@ -87,11 +87,6 @@ void initSerial() {
     delayMicroseconds(100); // Ensure power-down command is sent
 
     Serial.println("Entering Light Sleep...");
-       // Enable wake-up from WiFi
-       esp_sleep_enable_wifi_wakeup();
-
-       // Enable WiFi modem power saving mode
-       esp_wifi_set_ps(WIFI_PS_MIN_MODEM);
 
     // Convert seconds to microseconds
     uint64_t sleepTimeMicroseconds = sleepTimeSeconds * 1000000ULL;
@@ -101,7 +96,7 @@ void initSerial() {
 
     // Start light sleep
     esp_light_sleep_start();
-
+    wmsetup();
     Serial.println("Woke up from Light Sleep");
 }
   
