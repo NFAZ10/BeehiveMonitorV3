@@ -92,7 +92,9 @@ void initSerial() {
 
     // Enable wake-up timer
     esp_sleep_enable_timer_wakeup(sleepTimeMicroseconds);
-
+    strip.setPixelColor(0,0,0,0); //  Set pixel's color (in RAM)
+    strip.show();
+    delay(1000);
     // Start light sleep
     esp_light_sleep_start();
     wmsetup();
