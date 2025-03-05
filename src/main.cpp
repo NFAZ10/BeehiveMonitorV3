@@ -15,6 +15,7 @@
 #include "ota.h"
 #include "mqtt.h"
 #include <Preferences.h>
+#include "OLED.h"
 /////////////////
 
 float battery = 0.0;
@@ -34,6 +35,8 @@ void IRAM_ATTR tareButtonISR() {
 }
 
 void setup() {
+
+   
     pinMode(TARE_BUTTON_PIN, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(TARE_BUTTON_PIN), tareButtonISR, FALLING); // Attach the interrupt
 
@@ -42,7 +45,10 @@ void setup() {
     strip.setBrightness(50);
 
     initSerial();
-    
+    Serial.println("Starting Serial");
+
+    setupOLED();
+    Serial.println("Starting OLED");
     loadPreferences();
     initDHTSensors();
     initScale();

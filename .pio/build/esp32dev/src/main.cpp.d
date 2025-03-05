@@ -214,4 +214,5 @@
  src/sensors.h .pio/libdeps/esp32dev/HX711_ADC/src/HX711_ADC.h \
  .pio/libdeps/esp32dev/HX711_ADC/src/config.h src/variables.h src/ota.h \
  src/mqtt.h \
- C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/Preferences/src/Preferences.h
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/Preferences/src/Preferences.h \
+ src/OLED.h
