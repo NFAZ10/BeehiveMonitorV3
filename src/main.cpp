@@ -153,6 +153,8 @@ void loop() {
     int weighttest = pref.getInt("Weight", 0);
     WebSerial.println(String("Weight Test:  ") + weight);
     pref.end();
+
+    delay(5000);
     clearOLED();
     if (disablesleep == false) {
         if (battery > 4.15) {

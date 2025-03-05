@@ -8,6 +8,7 @@
 #include <ArduinoJson.h>
 #include "variables.h"
 #include "webserialsetup.h"
+#include "OLED.h"
 
 
 
@@ -191,6 +192,13 @@ void measureBattery() {
 
 
 void updateScale() {
+  // Display weighing on OLED
+  display.clearDisplay();
+  display.setTextSize(2); // Set text size to 2 for larger text
+  display.setTextColor(SSD1306_WHITE); // Set text color to white
+  display.setCursor(0, 0); // Set cursor to top-left corner
+  display.print("Weighing: ");
+  display.display(); // Display the text
   static bool newDataReady = false;
   int sampleCount = 100;
   int total = 0 ;
@@ -209,14 +217,32 @@ WebSerial.println("Reading Scale");
    for (int i = 0; i < sampleCount; i++) {
     while (!LoadCell.update()) {
       //Serial.print("Reading Scale:  ");
-      //Serial.println(LoadCell.getData());
+      //Serial.println(LoadCell.getData());m
+      display.clearDisplay();
+      display.setTextSize(1); // Set text size to 2 for larger text
+      display.setTextColor(SSD1306_WHITE); // Set text color to white
+      display.setCursor(0, 0); // Set cursor to top-left corner
+      display.print("Reading: ");
+      display.setTextSize(2); // Set text size to 2 for larger text
+      display.setCursor(0,15); // Set cursor to top-left corner
+      display.print(LoadCell.getData());
+      display.display(); // Display the text
     }
     total += LoadCell.getData();
    // Serial.println(String("Raw Data: ") + LoadCell.getData()*calibrationValue);
   }
   
        //Serial.print(String("Total: ") + total); Serial.println(String(" || SampleCount: ") + sampleCount);
-      
+      // Display weight on OLED
+      display.clearDisplay();
+      display.setTextSize(2); // Set text size to 2 for larger text
+      display.setTextColor(SSD1306_WHITE); // Set text color to white
+      display.setCursor(0, 0); // Set cursor to top-left corner
+      display.print("Weight: ");
+      display.setCursor(0,20); // Set cursor to top-left corner
+      display.print(grams);
+      display.println(" g");
+      display.display(); // Display the text
       grams= total/sampleCount;
       WebSerial.println(String("Last Weight: ") + last_weightstore);
       grams=grams+last_weightstore; //set offset from last weight

@@ -215,4 +215,10 @@
  .pio/libdeps/esp32dev/HX711_ADC/src/config.h src/variables.h src/ota.h \
  src/mqtt.h \
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/Preferences/src/Preferences.h \
- src/OLED.h
+ src/OLED.h .pio/libdeps/esp32dev/Adafruit\ SSD1306/Adafruit_SSD1306.h \
+ .pio/libdeps/esp32dev/Adafruit\ GFX\ Library/Adafruit_GFX.h \
+ .pio/libdeps/esp32dev/Adafruit\ GFX\ Library/gfxfont.h \
+ .pio/libdeps/esp32dev/Adafruit\ BusIO/Adafruit_I2CDevice.h \
+ .pio/libdeps/esp32dev/Adafruit\ BusIO/Adafruit_SPIDevice.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src/SPI.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-spi.h

@@ -5,14 +5,14 @@
 #include "mqtt.h"
 #include <WiFi.h>
 #include "variables.h"
+#include "OLED.h"
 
-#define SCREEN_WIDTH 128  // OLED display width, in pixels
-#define SCREEN_HEIGHT 32  // OLED display height, in pixels
-
-#define OLED_RESET     -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 #define SCREEN_ADDRESS 0x3C // I2C Address
 
+#ifndef DISPLAY_DEFINED
+#define DISPLAY_DEFINED
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+#endif
 
 #define WIFI_SYMBOL_WIDTH 16
 #define WIFI_SYMBOL_HEIGHT 16
@@ -34,7 +34,7 @@ extern float t1;     // Temperature
 extern float h1;     // Humidity
 extern float voltageDividerReading;  // Battery voltage
 extern bool debug;
-extern const char* currentVersion;
+extern const char* MAINcurrentVersion;
 
 
 void setupOLED() {
@@ -47,10 +47,10 @@ void setupOLED() {
     display.setTextSize(1);      // Small font
     display.setTextColor(SSD1306_WHITE);
     display.setCursor(0, 0);
-    display.print("Beehive Monitor v3.0");
+    display.print("Beehive Monitor");
     display.setCursor(0, 10);
     display.print("Version: ");
-    display.print(currentVersion);
+    display.print(MAINcurrentVersion);
     display.display();
     delay(2000);
 }
@@ -115,10 +115,12 @@ void updateOLEDWithNetworkStatus() {
     } else {
         display.print("MQTT: Disconnected");
     }
-
+    delay(2000);
+    display.clearDisplay();
     // Display IP address
-    display.setCursor(0, 40);
+    display.setCursor(0, 0);
     if (WiFi.status() == WL_CONNECTED) {
+        display.setTextSize(2);
         display.print("IP: ");
         display.print(WiFi.localIP());
     } else {

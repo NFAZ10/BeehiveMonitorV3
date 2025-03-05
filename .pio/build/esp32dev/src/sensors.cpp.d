@@ -214,4 +214,13 @@
  .pio/libdeps/esp32dev/ESPAsyncWebServer/src/AsyncWebSocket.h \
  .pio/libdeps/esp32dev/ESPAsyncWebServer/src/WebHandlerImpl.h \
  .pio/libdeps/esp32dev/ESPAsyncWebServer/src/WebResponseImpl.h \
- C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/StreamString.h
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/StreamString.h \
+ src/OLED.h .pio/libdeps/esp32dev/Adafruit\ SSD1306/Adafruit_SSD1306.h \
+ .pio/libdeps/esp32dev/Adafruit\ GFX\ Library/Adafruit_GFX.h \
+ .pio/libdeps/esp32dev/Adafruit\ GFX\ Library/gfxfont.h \
+ .pio/libdeps/esp32dev/Adafruit\ BusIO/Adafruit_I2CDevice.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
+ .pio/libdeps/esp32dev/Adafruit\ BusIO/Adafruit_SPIDevice.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src/SPI.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-spi.h
