@@ -20,7 +20,6 @@ void initMQTT() {
   mqttClient.setServer(mqttServerb, mqttPortb);
   WebSerial.println("MQTT Client Initialized.");
   
-
 }
 
 #include <WiFi.h>  // Ensure WiFi library is included
