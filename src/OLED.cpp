@@ -120,8 +120,10 @@ void updateOLEDWithNetworkStatus() {
     // Display IP address
     display.setCursor(0, 0);
     if (WiFi.status() == WL_CONNECTED) {
-        display.setTextSize(2);
+        display.setTextSize(1);
         display.print("IP: ");
+        display.setCursor(0, 15);
+        display.setTextSize(1);
         display.print(WiFi.localIP());
     } else {
         display.print("IP: N/A");

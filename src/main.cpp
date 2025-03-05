@@ -158,19 +158,19 @@ void loop() {
     clearOLED();
     if (disablesleep == false) {
         if (battery > 4.15) {
-            printToOLED("Battery is above 4.15V. Restarting Loop.");
+            printToOLED("Restarting Loop.");
             WebSerial.println("Battery is above 4.15V. Restarting Loop.");
             Serial.println("Battery is above 4.15V. Restarting Loop.");
             strip.setPixelColor(0,0,255,0); strip.show();
         } else if (battery < 4.15 && battery > 3.7) {
-            printToOLED("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
+            printToOLED("BLight Sleep For 30 Min.");
             WebSerial.println("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
             Serial.println("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
             strip.setPixelColor(0,0,0,75); strip.show();
             delay(1000);
             enterLightSleep(1800);
         } else if (battery < 3.7 && battery > 3.5) {
-            printToOLED("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
+            printToOLED("Light Sleep for 1 Hour.");
             WebSerial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
             Serial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
             strip.setPixelColor(0,0,0,255); strip.show();
@@ -179,7 +179,7 @@ void loop() {
             delay(1000);
             enterLightSleep(3600);
         } else {
-            WebSerial.println("Battery is below 3.5V. Entering Deep Sleep for 2 Hour.");
+            WebSerial.println("Deep Sleep for 2 Hour.");
             Serial.println("Battery is below 3.5V. Entering Deep Sleep for 2 Hour.");
             strip.setPixelColor(0,255,0,0); strip.show();
             delay(1000);

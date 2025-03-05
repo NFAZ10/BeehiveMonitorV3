@@ -232,17 +232,7 @@ WebSerial.println("Reading Scale");
    // Serial.println(String("Raw Data: ") + LoadCell.getData()*calibrationValue);
   }
   
-       //Serial.print(String("Total: ") + total); Serial.println(String(" || SampleCount: ") + sampleCount);
-      // Display weight on OLED
-      display.clearDisplay();
-      display.setTextSize(2); // Set text size to 2 for larger text
-      display.setTextColor(SSD1306_WHITE); // Set text color to white
-      display.setCursor(0, 0); // Set cursor to top-left corner
-      display.print("Weight: ");
-      display.setCursor(0,20); // Set cursor to top-left corner
-      display.print(grams);
-      display.println(" g");
-      display.display(); // Display the text
+
       grams= total/sampleCount;
       WebSerial.println(String("Last Weight: ") + last_weightstore);
       grams=grams+last_weightstore; //set offset from last weight
