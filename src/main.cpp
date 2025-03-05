@@ -76,8 +76,10 @@ void setup() {
 void loop() {
     WebSerial.loop();
 
+
     if (tareRequested) {
         tareRequested = false; // Clear the flag
+        tareDisplay(); // Call the tare function
         Serial.println("Tare Button Pressed");
         tareScale(); // Call the tare function
     }
@@ -86,7 +88,9 @@ void loop() {
     updateScale();
     measureBattery();
     checkForUpdates();
+    updateOLED();
 
+    delay(3000);
     WebSerial.println("//////////////////LOOP////////////////"); delay(1000);
     WebSerial.println("Battery: " + String(battery)); delay(1000);
     WebSerial.println("Weight: " + String(weightInPounds)); delay(1000);
@@ -141,7 +145,7 @@ void loop() {
         Serial.println("Battery: " + String(voltageDividerReading));
         Serial.println("//////////////////////////////////////////");
     }
-
+    updateOLEDWithNetworkStatus();
     WebSerial.println(String("Disable Sleep: ") + disablesleep);
     Serial.println(String("Disable Sleep: ") + disablesleep);
 
@@ -149,19 +153,22 @@ void loop() {
     int weighttest = pref.getInt("Weight", 0);
     WebSerial.println(String("Weight Test:  ") + weight);
     pref.end();
-
+    clearOLED();
     if (disablesleep == false) {
         if (battery > 4.15) {
+            printToOLED("Battery is above 4.15V. Restarting Loop.");
             WebSerial.println("Battery is above 4.15V. Restarting Loop.");
             Serial.println("Battery is above 4.15V. Restarting Loop.");
             strip.setPixelColor(0,0,255,0); strip.show();
         } else if (battery < 4.15 && battery > 3.7) {
+            printToOLED("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
             WebSerial.println("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
             Serial.println("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
             strip.setPixelColor(0,0,0,75); strip.show();
             delay(1000);
             enterLightSleep(1800);
         } else if (battery < 3.7 && battery > 3.5) {
+            printToOLED("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
             WebSerial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
             Serial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
             strip.setPixelColor(0,0,0,255); strip.show();

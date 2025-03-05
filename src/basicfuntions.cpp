@@ -5,7 +5,7 @@
 #include <WiFi.h>
 #include <esp_wifi.h>
 #include "wifisetup.h"
-
+#include "OLED.h"
 
 
 Preferences prefs;
@@ -61,7 +61,9 @@ void initSerial() {
   
   void enterDeepSleep(uint64_t sleepTimeSeconds) {
       Serial.println("Powering down HX711...");
-      
+
+      clearOLED();
+      powerOffOLED();
       // Set HX711 into power-down mode (Clock HIGH)
       digitalWrite(HX711_CLK, HIGH);
       delayMicroseconds(100); // Ensure power-down command is sent
@@ -80,7 +82,7 @@ void initSerial() {
 
   void enterLightSleep(uint64_t sleepTimeSeconds) {
     Serial.println("Powering down HX711...");
-    
+    powerOffOLED();
     // Set HX711 into power-down mode (Clock HIGH)
     digitalWrite(HX711_CLK, HIGH);
     delayMicroseconds(100); // Ensure power-down command is sent
@@ -89,7 +91,7 @@ void initSerial() {
 
     // Convert seconds to microseconds
     uint64_t sleepTimeMicroseconds = sleepTimeSeconds * 1000000ULL;
-
+    clearOLED();
     // Enable wake-up timer
     esp_sleep_enable_timer_wakeup(sleepTimeMicroseconds);
     strip.setPixelColor(0,0,0,0); //  Set pixel's color (in RAM)
@@ -99,6 +101,7 @@ void initSerial() {
     esp_light_sleep_start();
     wmsetup();
     Serial.println("Woke up from Light Sleep");
+    powerOnOLED();
     delay(2000);
 }
   
