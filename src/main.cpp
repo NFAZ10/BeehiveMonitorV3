@@ -26,7 +26,7 @@ float weight = 0.0;
 int counter = 0;
 float mVA;
 bool weightset = false;
-
+int timesincelastrestart = 0;
 
 Preferences pref;
 
@@ -90,7 +90,7 @@ void loop() {
     checkForUpdates();
     updateOLED();
 
-    delay(3000);
+    
     WebSerial.println("//////////////////LOOP////////////////"); delay(1000);
     WebSerial.println("Battery: " + String(battery)); delay(1000);
     WebSerial.println("Weight: " + String(weightInPounds)); delay(1000);
@@ -154,6 +154,19 @@ void loop() {
     WebSerial.println(String("Weight Test:  ") + weight);
     pref.end();
 
+    if (tareRequested) {
+        tareRequested = false; // Clear the flag
+        tareDisplay(); // Call the tare function
+        Serial.println("Tare Button Pressed");
+        tareScale(); // Call the tare function
+    }
+    timesincelastrestart++;
+    Serial.println("Time Since Last Restart: " + String(timesincelastrestart));
+    WebSerial.println("Time Since Last Restart: " + String(timesincelastrestart));
+    if (timesincelastrestart > 5) {
+        timesincelastrestart = 0;
+        ESP.restart();
+    }
     delay(5000);
     clearOLED();
     if (disablesleep == false) {

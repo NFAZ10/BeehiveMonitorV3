@@ -27,6 +27,8 @@ extern int counter;
 extern float mVA;
 extern bool weightset;
 extern Preferences prefs;
+extern int numberofloadcells;
+
 
 
 void initDHTSensors() {
@@ -216,8 +218,8 @@ WebSerial.println("Reading Scale");
  
    for (int i = 0; i < sampleCount; i++) {
     while (!LoadCell.update()) {
-      //Serial.print("Reading Scale:  ");
-      //Serial.println(LoadCell.getData());m
+      Serial.print("Reading Scale:  ");
+      Serial.println(LoadCell.getData());
       display.clearDisplay();
       display.setTextSize(1); // Set text size to 2 for larger text
       display.setTextColor(SSD1306_WHITE); // Set text color to white
@@ -234,6 +236,8 @@ WebSerial.println("Reading Scale");
   
 
       grams= total/sampleCount;
+
+
       WebSerial.println(String("Last Weight: ") + last_weightstore);
       grams=grams+last_weightstore; //set offset from last weight
 

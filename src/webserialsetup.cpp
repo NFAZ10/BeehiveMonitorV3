@@ -45,6 +45,7 @@ void recvMsg(uint8_t *data, size_t len) {
       prefs.begin("beehive-data");
       prefs.putFloat("calibrationFactor", calibrationValue);
       prefs.end();
+      ESP.restart();
       }
       WebSerial.println("Cal Set");
     } else if(msg == "clear") {

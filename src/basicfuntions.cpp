@@ -28,6 +28,8 @@ void initSerial() {
     prefs.begin("beehive"),false;
     last_weightstore = prefs.getInt("Weight");
     mVA              = prefs.getFloat("mVA");
+   // calibrationValue = prefs.getFloat("calibrationFactor");
+
     prefs.end();
 
       Serial.println(String("Last Weight=") + last_weightstore);
