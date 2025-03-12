@@ -118,7 +118,7 @@ void loop() {
         String topicBase = "beehive/data/";
         topicBase += macStr; // Get the last 4 digits of the MAC address
 
-        mqttClient.publish((topicBase + "/temperature1").c_str(), String(t1).c_str()); delay(1000);
+        mqttClient.publish((topicBase + "/temperature1").c_str(), String(temp1).c_str()); delay(1000);
         mqttClient.publish((topicBase + "/humidity1").c_str(), String(h1).c_str()); delay(1000);
         mqttClient.publish((topicBase + "/temperature2").c_str(), String(t2).c_str()); delay(1000);
         mqttClient.publish((topicBase + "/humidity2").c_str(), String(h2).c_str()); delay(1000);
@@ -133,7 +133,7 @@ void loop() {
         Serial.println("///////////////////LOOP///////////////////");
         Serial.println(topicBase);
         Serial.println("Published data to MQTT:");
-        Serial.println("temperature1: " + String(t1));
+        Serial.println("temperature1: " + String(temp1));
         Serial.println("Humidity1: " + String(h1));
         Serial.println("Temperature2: " + String(t2));
         Serial.println("Humidity2: " + String(h2));
