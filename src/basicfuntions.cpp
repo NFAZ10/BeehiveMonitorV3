@@ -1,7 +1,7 @@
 #include <Arduino.h>
 #include <Preferences.h>
 #include "variables.h"
-#include <Adafruit_NeoPixel.h>
+
 #include <WiFi.h>
 #include <esp_wifi.h>
 #include "wifisetup.h"
@@ -9,7 +9,6 @@
 
 
 Preferences prefs;
-Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 
 extern int mVA;
 extern int last_weightstore;
@@ -96,8 +95,7 @@ void initSerial() {
     clearOLED();
     // Enable wake-up timer
     esp_sleep_enable_timer_wakeup(sleepTimeMicroseconds);
-    strip.setPixelColor(0,0,0,0); //  Set pixel's color (in RAM)
-    strip.show();
+
     delay(1000);
     // Start light sleep
     esp_light_sleep_start();

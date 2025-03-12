@@ -3,7 +3,7 @@
 #include "HX711_ADC.h"
 #include "DHT.h"
 #include "ArduinoJson.h"
-#include "Adafruit_NeoPixel.h"
+
 #include <Preferences.h>
 #include <ArduinoJson.h>
 #include "variables.h"
@@ -11,8 +11,6 @@
 #include "OLED.h"
 
 
-
-extern Adafruit_NeoPixel strip;
 
 DHT dht1(27, DHT11);
 DHT dht2(26, DHT11);
@@ -40,14 +38,7 @@ void initDHTSensors() {
   void tareScale() {
     // Start the tare process
     WebSerial.println("Tare started...");
-    strip.setPixelColor(0,255,255,255); //  Set pixel's color (in RAM)
-    strip.show();
-    delay(1000);
-    strip.setPixelColor(0,255,255,0); //  Set pixel's color (in RAM)
-    strip.show();
-    delay(1000);
-    strip.setPixelColor(0,255,255,255); //  Set pixel's color (in RAM)
-    strip.show();
+  
 
     LoadCell.update();
   
@@ -88,8 +79,7 @@ void initDHTSensors() {
     delay(500); // Allow Serial message to complete
     weightset=false;
     //ESP.restart(); // Reboot the ESP
-    strip.setPixelColor(0,0,255,0); //  Set pixel's color (in RAM)
-    strip.show();
+
   }
   
 
@@ -207,11 +197,6 @@ void updateScale() {
 if(debug){
 Serial.println("Reading Scale");
 WebSerial.println("Reading Scale");
-      strip.setPixelColor(0,255,255,15); //  Set pixel's color (in RAM)
-      strip.show();
-      delay(1000);
-      strip.setPixelColor(0,0,255,255); //  Set pixel's color (in RAM)
-      strip.show();
 
 
 }
@@ -244,8 +229,7 @@ WebSerial.println("Reading Scale");
       if(grams < 0){
         WebSerial.println("Negative Weight Detected. Zeroing...");
         grams = 0;
-        strip.setPixelColor(0,255,0,0); //  Set pixel's color (in RAM)
-        strip.show();
+
       }
    
       //grams=LoadCell.getData();
@@ -260,8 +244,7 @@ WebSerial.println("Reading Scale");
   prefs.putInt("Weight",grams);
   prefs.end();
     
-  strip.setPixelColor(0,0,0,0); //  Set pixel's color (in RAM)
-  strip.show();
+
 }
 
 

@@ -196,6 +196,7 @@
  .pio/libdeps/esp32dev/PubSubClient/src/PubSubClient.h \
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/esp_system/include/esp_task_wdt.h \
  src/wifisetup.h src/webserialsetup.h \
  .pio/libdeps/esp32dev/WebSerial/src/WebSerial.h \
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/stdlib_noniso.h \
@@ -209,9 +210,8 @@
  .pio/libdeps/esp32dev/ESPAsyncWebServer/src/WebHandlerImpl.h \
  .pio/libdeps/esp32dev/ESPAsyncWebServer/src/WebResponseImpl.h \
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/StreamString.h \
- src/basicfunctions.h \
- .pio/libdeps/esp32dev/Adafruit\ NeoPixel/Adafruit_NeoPixel.h \
- src/sensors.h .pio/libdeps/esp32dev/HX711_ADC/src/HX711_ADC.h \
+ src/basicfunctions.h src/sensors.h \
+ .pio/libdeps/esp32dev/HX711_ADC/src/HX711_ADC.h \
  .pio/libdeps/esp32dev/HX711_ADC/src/config.h src/variables.h src/ota.h \
  src/mqtt.h \
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/Preferences/src/Preferences.h \

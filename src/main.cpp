@@ -2,6 +2,7 @@
 #include <WiFi.h>
 #include <PubSubClient.h>
 #include <Wire.h>
+#include "esp_task_wdt.h"
 
 /////////////////
 ///Our Setups////
@@ -16,6 +17,20 @@
 #include "mqtt.h"
 #include <Preferences.h>
 #include "OLED.h"
+//#include "ble.h"
+
+#define DEBUG 0
+#if DEBUG
+  #define DEBUG_PRINT(x) Serial.println(x)
+#else
+  #define DEBUG_PRINT(x)
+#endif
+
+
+
+#define WDT_TIMEOUT 50
+
+
 /////////////////
 
 float battery = 0.0;
@@ -37,16 +52,16 @@ void IRAM_ATTR tareButtonISR() {
 }
 
 void setup() {
-
+    esp_task_wdt_init(WDT_TIMEOUT,true);
+    esp_task_wdt_add(NULL);
    
     pinMode(TARE_BUTTON_PIN, INPUT_PULLUP);
     attachInterrupt(digitalPinToInterrupt(TARE_BUTTON_PIN), tareButtonISR, FALLING); // Attach the interrupt
 
-    strip.begin();
-    strip.show(); // Turn OFF all pixels ASAP
-    strip.setBrightness(50);
 
     initSerial();
+    //setupBLE();
+    Serial.println("Starting BLE");
     Serial.println("Starting Serial");
 
     setupOLED();
@@ -61,8 +76,7 @@ void setup() {
         if(battery > 3.5 || battery == 0){
             WebSerial.println("Starting Wifi Setup");
             Serial.println("Starting Wifi Setup");
-            strip.setPixelColor(0,100,0,0);
-            strip.show();
+
             wmsetup();
             webserial();
             initMQTT();
@@ -103,7 +117,28 @@ void loop() {
     checkForUpdates();
     updateOLED();
 
+/*    if (doConnect == true) {
+        if (connectToServer()) {
+          Serial.println("We are now connected to the BLE Server.");
+        } else {
+          Serial.println("We have failed to connect to the server; there is nothing more we will do.");
+        }
+        doConnect = false;
+      }
     
+      // If we are connected to a peer BLE Server, update the characteristic each time we are reached
+      // with the current time since boot.
+      if (connected) {
+        String newValue = "Time since boot: " + String(millis() / 1000);
+        Serial.println("Setting new characteristic value to \"" + newValue + "\"");
+    
+        // Set the characteristic's value to be the array of bytes that is actually a string.
+        pRemoteCharacteristic->writeValue(newValue.c_str(), newValue.length());
+      } else if (doScan) {
+        BLEDevice::getScan()->start(0);  // this is just example to start scan after disconnect, most likely there is better way to do it in arduino
+      }
+
+    */
     WebSerial.println("//////////////////LOOP////////////////"); delay(1000);
     WebSerial.println("Battery: " + String(battery)); delay(1000);
     WebSerial.println("Weight: " + String(weightInPounds)); delay(1000);
@@ -120,8 +155,7 @@ void loop() {
             checkForUpdates();
             connectToMQTT();
         }
-        strip.setPixelColor(0,0,255,0); // Set pixel's color (in RAM)
-        strip.show();
+;
         mqttClient.loop();
 
         uint8_t mac[6];
@@ -159,6 +193,7 @@ void loop() {
         Serial.println("Battery: " + String(voltageDividerReading));
         Serial.println("Charging: " + String(charging));
         Serial.println("//////////////////////////////////////////");
+        esp_task_wdt_reset();
     }
     updateOLEDWithNetworkStatus();
     WebSerial.println(String("Disable Sleep: ") + disablesleep);
@@ -184,41 +219,35 @@ void loop() {
     }
     delay(5000);
     clearOLED();
+    esp_task_wdt_reset();
     if (disablesleep == false) {
         if (battery > 4.15) {
             //printToOLED("Restarting Loop.");
             WebSerial.println("Battery is above 4.15V. Restarting Loop.");
             Serial.println("Battery is above 4.15V. Restarting Loop.");
-            strip.setPixelColor(0,0,255,0); strip.show();
+            
         } else if (battery < 4.15 && battery > 3.7) {
             //printToOLED("BLight Sleep For 30 Min.");
             WebSerial.println("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
             Serial.println("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
-            strip.setPixelColor(0,0,0,75); strip.show();
+     
             delay(1000);
             enterLightSleep(1800);
         } else if (battery < 3.7 && battery > 3.5) {
             //printToOLED("Light Sleep for 1 Hour.");
             WebSerial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
             Serial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
-            strip.setPixelColor(0,0,0,255); strip.show();
-            delay(1000);
-            strip.setPixelColor(0,0,0,0); strip.show();
-            delay(1000);
+
             enterLightSleep(3600);
         } else {
             WebSerial.println("Deep Sleep for 2 Hour.");
             Serial.println("Battery is below 3.5V. Entering Deep Sleep for 2 Hour.");
-            strip.setPixelColor(0,255,0,0); strip.show();
-            delay(1000);
-            strip.setPixelColor(0,0,0,0); strip.show();
-            delay(1000);
+
             delay(1000);
             enterDeepSleep(7200);
         }
     } else {
-        strip.setPixelColor(0,0,0,0);
-        strip.show();
+
     }
     delay(1000);
 }

@@ -141,7 +141,6 @@
  .pio/libdeps/esp32dev/ArduinoJson/src/ArduinoJson.h \
  .pio/libdeps/esp32dev/ArduinoJson/src/ArduinoJson.hpp \
  .pio/libdeps/esp32dev/ArduinoJson/src/ArduinoJson/Configuration.hpp \
- .pio/libdeps/esp32dev/Adafruit\ NeoPixel/Adafruit_NeoPixel.h \
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/Preferences/src/Preferences.h \
  src/variables.h src/webserialsetup.h \
  .pio/libdeps/esp32dev/WebSerial/src/WebSerial.h \

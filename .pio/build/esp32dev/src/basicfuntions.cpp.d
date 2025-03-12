@@ -135,7 +135,6 @@
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/Arduino.h \
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/Preferences/src/Preferences.h \
  src/variables.h \
- .pio/libdeps/esp32dev/Adafruit\ NeoPixel/Adafruit_NeoPixel.h \
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src/WiFi.h \
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/Print.h \
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/IPv6Address.h \
