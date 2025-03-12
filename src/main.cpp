@@ -27,6 +27,8 @@ int counter = 0;
 float mVA;
 bool weightset = false;
 int timesincelastrestart = 0;
+float oldbattery = 0.0;
+bool charging = false;
 
 Preferences pref;
 
@@ -87,6 +89,17 @@ void loop() {
     readDHTSensors();
     updateScale();
     measureBattery();
+    if (battery>oldbattery){
+    oldbattery=battery;
+    disablesleep=true;
+    charging=true;
+
+    }else if (battery<oldbattery){
+    oldbattery=battery;
+    disablesleep=false;
+    charging=false;
+    }
+
     checkForUpdates();
     updateOLED();
 
@@ -128,6 +141,7 @@ void loop() {
         mqttClient.publish((topicBase + "/mva").c_str(), String(mVA).c_str()); delay(1000);
         mqttClient.publish((topicBase + "/lbs").c_str(), String(weightInPounds).c_str()); delay(1000);
         mqttClient.publish((topicBase + "/IP").c_str(), WiFi.localIP().toString().c_str()); delay(1000);
+        mqttClient.publish((topicBase + "/charging").c_str(), String(charging).c_str()); delay(1000);
 
         lastPublishTime = millis(); // Update the last publish time
         Serial.println("///////////////////LOOP///////////////////");
@@ -143,6 +157,7 @@ void loop() {
         Serial.println("///////////////UTIL//////////////////////");
         Serial.println("version: " + String(currentVersion));
         Serial.println("Battery: " + String(voltageDividerReading));
+        Serial.println("Charging: " + String(charging));
         Serial.println("//////////////////////////////////////////");
     }
     updateOLEDWithNetworkStatus();
