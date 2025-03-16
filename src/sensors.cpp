@@ -120,25 +120,39 @@ void initDHTSensors() {
 
 
   
-  float movingAverage(int newValue) {
+float movingAverage(int newValue) {
     static float readings[NUM_SAMPLES] = {0};
-    static int   index = 0;
-    static float sum   = 0;
-  
-  
+    static int index = 0;
+    static float sum = 0;
+
+    // Load readings from Preferences if it's the first time
+    if (index == 0) {
+        prefs.begin("movingAvg", false);
+        for (int i = 0; i < NUM_SAMPLES; i++) {
+            readings[i] = prefs.getFloat(("reading" + String(i)).c_str(), 0);
+            sum += readings[i];
+        }
+        prefs.end();
+    }
+
     // Subtract the oldest reading from sum
     sum -= readings[index];
-  
+
     // Store the new reading
     readings[index] = newValue;
     sum += newValue;
-  
+
+    // Save the new reading to Preferences
+    prefs.begin("movingAvg", false);
+    prefs.putFloat(("reading" + String(index)).c_str(), newValue);
+    prefs.end();
+
     // Advance the index, wrapping around
     index = (index + 1) % NUM_SAMPLES;
-  
+
     // Return the average
     return sum / NUM_SAMPLES;
-  }
+}
   
 
   

@@ -34,7 +34,7 @@ void initSerial() {
       Serial.println(String("Last Weight=") + last_weightstore);
       Serial.println(String("Last mVA=") + mVA);
       Serial.println(String("Stored Calibration=") + calibrationValue);
-    
+      prefs.begin("movingAvg", false);
   }
 
 

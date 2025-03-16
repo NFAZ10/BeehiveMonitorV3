@@ -52,6 +52,7 @@ void IRAM_ATTR tareButtonISR() {
 }
 
 void setup() {
+    initSerial();
     esp_task_wdt_init(WDT_TIMEOUT,true);
     esp_task_wdt_add(NULL);
    
@@ -59,8 +60,7 @@ void setup() {
     attachInterrupt(digitalPinToInterrupt(TARE_BUTTON_PIN), tareButtonISR, FALLING); // Attach the interrupt
 
 
-    initSerial();
-    //setupBLE();
+    //BLEsetup();
     Serial.println("Starting BLE");
     Serial.println("Starting Serial");
 

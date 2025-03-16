@@ -1,9 +1,8 @@
 #ifndef BLE_H
 #define BLE_H
 
-#include "BLEDevice.h"
-
-void setupBLE();
+#include <NimBLEDevice.h>
+void BLEsetup();
 void BLEloop();
 bool connectToServer();
  // The remote service we wish to connect to.
