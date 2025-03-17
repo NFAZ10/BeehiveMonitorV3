@@ -4,7 +4,7 @@
 
 
 void wmsetup(); // Function prototype for wifisetup.cpp
-
+void resetWiFiManager(); // Function prototype for wifisetup.cpp
 
 
 

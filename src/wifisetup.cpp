@@ -16,3 +16,9 @@ void wmsetup() {
 
 
 }
+
+void resetWiFiManager() {
+  Serial.println("Resetting WiFi Manager settings...");
+  wifiManager.resetSettings();
+  Serial.println("WiFi Manager settings have been reset.");
+}

@@ -248,7 +248,7 @@ WebSerial.println("Reading Scale");
    
       //grams=LoadCell.getData();
 
-  mVA= movingAverage(grams);
+ // mVA= movingAverage(grams);
   WebSerial.println(String("mVA: ") + mVA);
   WebSerial.println(String("Grams: ") + grams);
   // Convert grams to pounds (1 gram = 0.00220462 pounds)
@@ -257,7 +257,7 @@ WebSerial.println("Reading Scale");
   prefs.begin("beehive",false);
   prefs.putInt("Weight",grams);
   prefs.end();
-    
+    clearOLED();
 
 }
 

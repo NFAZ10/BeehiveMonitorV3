@@ -5,6 +5,9 @@
 
 // Constants and definitions
 #define TARE_BUTTON_PIN        25
+#define FactoryReset_PIN       33
+#define button3                34
+#define activate_monitor       35
 #define VOLTAGE_PIN            32 // GPIO pin connected to the voltage divider
 #define NUM_SAMPLES            500
 #define MAX_DATA_POINTS        144
@@ -25,6 +28,7 @@ extern bool useArduinoCloud;
 extern bool forceUpdate;
 extern bool weightset;
 extern bool disablesleep;
+extern bool newSetup;
 
 extern float h1, t1;
 extern float h2, t2;

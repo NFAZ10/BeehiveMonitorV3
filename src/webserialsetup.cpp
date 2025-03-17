@@ -69,8 +69,10 @@ void recvMsg(uint8_t *data, size_t len) {
    //   loadPreferences();
     } else if(msg == "read") {
     //  readDHTSensors();
-    } else if(msg == "scale") {
-    //  updateScale();
+    } else if(msg == "activate") {
+      WebSerial.println("Activating install from Factory Defaults");
+      newSetup = false;
+      prefs.putBool("newSetups",false);
     } else
   
     {

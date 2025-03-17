@@ -27,6 +27,7 @@ void initSerial() {
     prefs.begin("beehive"),false;
     last_weightstore = prefs.getInt("Weight");
     mVA              = prefs.getFloat("mVA");
+    newSetup        = prefs.getBool("newSetups");
    // calibrationValue = prefs.getFloat("calibrationFactor");
 
     prefs.end();
