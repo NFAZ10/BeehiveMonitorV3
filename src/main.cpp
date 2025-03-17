@@ -176,6 +176,7 @@ void loop() {
             mqttClient.publish((topicBase + "/lbs").c_str(), String(weightInPounds).c_str()); delay(1000);
             mqttClient.publish((topicBase + "/IP").c_str(), WiFi.localIP().toString().c_str()); delay(1000);
             mqttClient.publish((topicBase + "/charging").c_str(), String(charging).c_str()); delay(1000);
+            mqttClient.publish((topicBase + "/backend/newSetup").c_str(), String(newSetup).c_str()); delay(1000);
 
             lastPublishTime = millis(); // Update the last publish time
             Serial.println("///////////////////LOOP///////////////////");
