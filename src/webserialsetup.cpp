@@ -72,7 +72,11 @@ void recvMsg(uint8_t *data, size_t len) {
     } else if(msg == "activate") {
       WebSerial.println("Activating install from Factory Defaults");
       newSetup = false;
+      prefs.begin("beehive", false);
       prefs.putBool("newSetups",false);
+      prefs.end();
+      ESP.restart();
+
     } else
   
     {
