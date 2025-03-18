@@ -36,14 +36,8 @@ void connectToMQTT() {
         // Attempt to connect
         if (mqttClient.connect("BeehiveMonitor")) {
             Serial.println("connected");
-            // Subscribe to topics with MAC address
-            mqttClient.subscribe(("beehive/" + macAddress + "/command/tare").c_str());
-            mqttClient.subscribe(("beehive/" + macAddress + "/command/reset").c_str());
-            mqttClient.subscribe(("beehive/" + macAddress + "/command/sleep").c_str());
-            mqttClient.subscribe(("beehive/" + macAddress + "/command/wakeup").c_str());
-            mqttClient.subscribe(("beehive/" + macAddress + "/command/disableSleep").c_str());
-            mqttClient.subscribe(("beehive/" + macAddress + "/command/newSetup").c_str());
-        } else {
+
+            } else {
             Serial.print("failed, rc=");
             Serial.print(mqttClient.state());
             Serial.println(" try again in 5 seconds");
@@ -54,38 +48,22 @@ void connectToMQTT() {
 }
 
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
-    String message;
-    for (unsigned int i = 0; i < length; i++) {
-        message += (char)payload[i];
-    }
-    Serial.print("Message arrived [");
-    Serial.print(topic);
-    Serial.print("] ");
-    Serial.println(message);
-
-    String macAddress = getMacAddress();
-    String baseTopic = "beehive/" + macAddress + "/command/";
-
-    // Act on the message based on the topic
-    if (String(topic) == baseTopic + "tare") {
-        tareRequested = true;
-    } else if (String(topic) == baseTopic + "reset") {
-        ESP.restart();
-    } else if (String(topic) == baseTopic + "wakeup") {
-        disablesleep = true;
-    } else if (String(topic) == baseTopic + "disableSleep") {
-        disablesleep = message.toInt();
-    } else if (String(topic) == baseTopic + "newSetup") {
-        newSetup = message.toInt();
-        prefs.begin("beehive", false);
-        prefs.putBool("newSetup", newSetup);
-        prefs.end();
-    }
 }
-
 
 void initMQTT() {
     mqttClient.setServer(mqttServerb, mqttPortb);
     mqttClient.setCallback(mqttCallback);
     WebSerial.println("MQTT Client Initialized.");
+
+    // Retrieve stored values from NVS
+    prefs.begin("beehive", true); // Open in read-only mode
+    newSetup = prefs.getBool("newSetup", false); // Default to false if not set
+    disablesleep = prefs.getBool("disableSleep", false); // Default to false if not set
+    prefs.end();
+
+    // Print retrieved values
+    Serial.print("Retrieved newSetup: ");
+    Serial.println(newSetup);
+    Serial.print("Retrieved disableSleep: ");
+    Serial.println(disablesleep);
 }

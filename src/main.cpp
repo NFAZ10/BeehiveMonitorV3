@@ -61,7 +61,7 @@ void IRAM_ATTR factoryResetISR() {
     newSetup = true; // Set the flag when the interrupt is triggered
     clearPreferences();
     resetWiFiManager();
-    ESP.restart();
+    //ESP.restart();
 
 }
 void setup() {
@@ -84,7 +84,7 @@ void setup() {
     Serial.println("Starting OLED");
 
     pref.begin("beehive", false);
-    newSetup = pref.getBool("newSetup", true); // Get the newSetup flag from Preferences
+    newSetup = pref.getBool("newSetup"); // Get the newSetup flag from Preferences
     pref.end();
 
 
@@ -112,22 +112,7 @@ void setup() {
 }
 
 void loop() {
-    if (newSetup) { 
-        checkForUpdates();
-        WebSerial.println("New Setup: Please send a command via WebSerial or press the button to proceed.");
-        Serial.println("New Setup: Please send a command via WebSerial or press the button to proceed.");
-        WebSerial.loop();
-        if (tareRequested) {
-            tareRequested = false; // Clear the flag
-            newSetup = false; // Exit the new setup mode
-            pref.begin("beehive", false);
-            pref.putBool("newSetup", false); // Update the newSetup flag in Preferences
-            pref.end();
-            Serial.println("Button pressed. Exiting new setup mode.");
-        }
-        delay(1000);
-        esp_task_wdt_reset();
-    } else {
+
         WebSerial.loop();
         checkForUpdates();
 
@@ -210,6 +195,7 @@ void loop() {
         pref.begin("beehive", false);
         int weighttest = pref.getInt("Weight", 0);
         WebSerial.println(String("Weight Test:  ") + weight);
+        pref.putString("name", Name);
         pref.end();
 
         if (tareRequested) {
@@ -251,6 +237,6 @@ void loop() {
             // Do nothing
         }
         delay(1000);
-    }
+    
 }
 

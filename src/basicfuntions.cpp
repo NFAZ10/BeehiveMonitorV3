@@ -47,6 +47,7 @@ void initSerial() {
     prefs.begin("beehive",false);
     prefs.putInt("Weight",0);
     prefs.putFloat("mVA",0.0);
+    prefs.putBool("newSetup",true);
     last_weightstore = prefs.getInt("Weight");
     mVA              = prefs.getFloat("mVA");
     Serial.println(String("Last Weight=") + last_weightstore);

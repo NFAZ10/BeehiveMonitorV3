@@ -75,7 +75,7 @@ void recvMsg(uint8_t *data, size_t len) {
       prefs.begin("beehive", false);
       prefs.putBool("newSetups",false);
       prefs.end();
-      ESP.restart();
+     
 
     }else if(msg.startsWith("NAMESET[")){
       prefs.begin("beehive", false);
