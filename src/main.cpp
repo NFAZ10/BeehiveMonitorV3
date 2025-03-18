@@ -115,7 +115,6 @@ void loop() {
     if (newSetup) { 
         checkForUpdates();
         WebSerial.println("New Setup: Please send a command via WebSerial or press the button to proceed.");
-        WebSerial.println(String("Version: ")+ currentVersion);
         Serial.println("New Setup: Please send a command via WebSerial or press the button to proceed.");
         WebSerial.loop();
         if (WiFi.status() == WL_CONNECTED) {
