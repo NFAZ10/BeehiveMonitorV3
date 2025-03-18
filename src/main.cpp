@@ -152,8 +152,7 @@ void loop() {
         }
 
         updateOLED();
-        Dashloop();
-        
+     
         if (WiFi.status() == WL_CONNECTED) {
             if (!mqttClient.connected()) {
                 checkForUpdates();

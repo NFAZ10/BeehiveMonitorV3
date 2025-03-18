@@ -5,17 +5,9 @@
 #include <Preferences.h>
 #include "basicfunctions.h"
 #include "ota.h"
-#include <ESPDash.h>
-#include <WiFi.h>
-#include <AsyncTCP.h>
-#include <ESPAsyncWebServer.h>
 
 AsyncWebServer server(80);  // Define WebServer instance
 
-ESPDash dashboard(&server);
-
-Card temperature(&dashboard, TEMPERATURE_CARD, "Temperature", "°C");
-Card humidity(&dashboard, HUMIDITY_CARD, "Humidity", "%");
 
 extern Preferences prefs;
 
@@ -94,6 +86,8 @@ void recvMsg(uint8_t *data, size_t len) {
         prefs.putString("name", nameStr);
       }
       prefs.end();
+      WebSerial.println("Name Set");
+      WebSerial.println(Name);
       
       } else
   
@@ -113,18 +107,3 @@ void recvMsg(uint8_t *data, size_t len) {
     WebSerial.println("WebSerial initialized!");
 }
 
-void Dashloop() {
-
-  /* Update Card Values */
-  temperature.update((int)random(0, 50));
-  humidity.update((int)random(0, 100));
-
-  /* Send Updates to our Dashboard (realtime) */
-  dashboard.sendUpdates();
-
-  /* 
-    Delay is just for demonstration purposes in this example,
-    Replace this code with 'millis interval' in your final project.
-  */
-  delay(3000);
-}
