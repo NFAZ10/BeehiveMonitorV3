@@ -65,54 +65,12 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
 
     // Act on the message based on the topic
     if (String(topic) == baseTopic + "tare") {
-<<<<<<< HEAD
-        if (message == "true") {
-            tareRequested = true;
-        }
-    } else if (String(topic) == baseTopic + "reset") {
-        if (message == "true") {
-            ESP.restart();
-        }
-    } else if (String(topic) == baseTopic + "wakeup") {
-        if (message == "true") {
-            disablesleep = true;
-        } else {
-            disablesleep = false;
-        }
-    } else if (String(topic) == baseTopic + "disableSleep") {
-        if (message == "true") {
-            disablesleep = true;
-        } else {
-            disablesleep = false;
-        }
-    } else if (String(topic) == baseTopic + "newSetup") {
-        if (message == "true") {
-            newSetup = true;
-        } else {
-            newSetup = false;
-        }
-        prefs.begin("beehive", false);
-        prefs.putBool("newSetup", newSetup);
-        prefs.end();
-    }
-    if (String(topic) == baseTopic + "tare") {
-=======
->>>>>>> 9e84072715659ac7f6d994acb39e54d55e926b13
         tareRequested = true;
     } else if (String(topic) == baseTopic + "reset") {
         ESP.restart();
     } else if (String(topic) == baseTopic + "wakeup") {
-<<<<<<< HEAD
-        if (message == "true") {
-            disablesleep = true;
-        } else {
-            disablesleep = false;
-        }
-        } else if (String(topic) == baseTopic + "disableSleep") {
-=======
         disablesleep = true;
     } else if (String(topic) == baseTopic + "disableSleep") {
->>>>>>> 9e84072715659ac7f6d994acb39e54d55e926b13
         disablesleep = message.toInt();
     } else if (String(topic) == baseTopic + "newSetup") {
         newSetup = message.toInt();
