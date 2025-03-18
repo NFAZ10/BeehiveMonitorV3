@@ -17,6 +17,7 @@
 #include "mqtt.h"
 #include <Preferences.h>
 #include "OLED.h"
+
 //#include "ble.h"
 
 #define DEBUG 0
@@ -137,6 +138,7 @@ void loop() {
             topicBase += macStr; // Get the last 4 digits of the MAC address
 
             mqttClient.publish((topicBase + "/NEWINSTALL/NEW").c_str(), String(newSetup).c_str()); delay(1000);
+            
                  delay(1000);
             
         if (tareRequested) {
@@ -174,7 +176,8 @@ void loop() {
         }
 
         updateOLED();
-
+        Dashloop();
+        
         if (WiFi.status() == WL_CONNECTED) {
             if (!mqttClient.connected()) {
                 checkForUpdates();
