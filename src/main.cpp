@@ -177,7 +177,7 @@ void loop() {
             mqttClient.publish((topicBase + "/humidity2").c_str(), String(h2).c_str()); delay(1000);
             mqttClient.publish((topicBase + "/weight").c_str(), String(grams).c_str()); delay(1000);
             mqttClient.publish((topicBase + "/battery").c_str(), String(voltageDividerReading).c_str()); delay(1000);
-            mqttClient.publish((topicBase + "/version").c_str(), String(currentVersion).c_str()); delay(1000);
+            mqttClient.publish((topicBase + "/backend/version").c_str(), String(currentVersion).c_str()); delay(1000);
             mqttClient.publish((topicBase + "/mva").c_str(), String(mVA).c_str()); delay(1000);
             mqttClient.publish((topicBase + "/lbs").c_str(), String(weightInPounds).c_str()); delay(1000);
             mqttClient.publish((topicBase + "/IP").c_str(), WiFi.localIP().toString().c_str()); delay(1000);
