@@ -5,6 +5,7 @@
 #include <Preferences.h>
 #include "basicfunctions.h"
 #include "ota.h"
+#include <ESPDashPro.h>
 
 AsyncWebServer server(80);  // Define WebServer instance
 
@@ -99,6 +100,7 @@ void recvMsg(uint8_t *data, size_t len) {
     WebSerial.println(msg);  // Send the reconstructed string to WebSerial
   
   }
+  ESPDash dashboard(&server); 
 
   void webserial() {
     WebSerial.begin(&server); // Start WebSerial
