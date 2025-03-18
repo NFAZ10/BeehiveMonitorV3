@@ -81,10 +81,9 @@ void recvMsg(uint8_t *data, size_t len) {
       WebSerial.println("Activating install from Factory Defaults");
       newSetup = false;
       prefs.begin("beehive", false);
-      prefs.putBool("newSetup",false);
+      prefs.putBool("newSetups",false);
       prefs.end();
-      delay(1000);
-      //ESP.restart();
+      ESP.restart();
 
     }else if(msg.startsWith("NAMESET[")){
       prefs.begin("beehive", false);
