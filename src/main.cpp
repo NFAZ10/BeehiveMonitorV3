@@ -116,6 +116,28 @@ void loop() {
         WebSerial.println("New Setup: Please send a command via WebSerial or press the button to proceed.");
         Serial.println("New Setup: Please send a command via WebSerial or press the button to proceed.");
         WebSerial.loop();
+        if (WiFi.status() == WL_CONNECTED) {
+            if (!mqttClient.connected()) {
+                checkForUpdates();
+                connectToMQTT();
+            }
+            mqttClient.loop();
+
+            uint8_t mac[6];
+            WiFi.macAddress(mac);
+            char macStr[13];
+            if (Name != NULL) {
+                strncpy(macStr, Name.c_str(), sizeof(macStr) - 1);
+                macStr[sizeof(macStr) - 1] = '\0'; // Ensure null-termination
+            } else {
+                snprintf(macStr, sizeof(macStr), "%02X%02X%02X%02X", mac[2], mac[3], mac[4], mac[5]);
+            }
+            String topicBase = "beehive/data/";
+            topicBase += macStr; // Get the last 4 digits of the MAC address
+
+            mqttClient.publish((topicBase + "/NEWINSTALL/NEW").c_str(), String(newSetup).c_str()); delay(1000);
+                 delay(1000);
+            
         if (tareRequested) {
             tareRequested = false; // Clear the flag
             newSetup = false; // Exit the new setup mode
@@ -253,3 +275,4 @@ void loop() {
     }
 }
 
+}
