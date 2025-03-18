@@ -13,18 +13,21 @@ extern Preferences prefs;
 const char* mqttServerb = "mqtt.beehivemonitor.com";
 const int mqttPortb = 4116;
 
-
+extern String Name;
 
 #include <WiFi.h>  // Ensure WiFi library is included
 #include <Arduino.h>
 
 String getMacAddress() {
+    if (Name != NULL && Name.length() > 0) {
+        return Name;
+    }else{
     uint8_t mac[6];
     WiFi.macAddress(mac);
     char macStr[18];
     snprintf(macStr, sizeof(macStr), "%02X:%02X:%02X:%02X:%02X:%02X", mac[0], mac[1], mac[2], mac[3], mac[4], mac[5]);
     return String(macStr);
-}
+}}
 
 void connectToMQTT() {
     String macAddress = getMacAddress();

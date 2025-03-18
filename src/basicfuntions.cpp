@@ -28,6 +28,7 @@ void initSerial() {
     last_weightstore = prefs.getInt("Weight");
     mVA              = prefs.getFloat("mVA");
     newSetup        = prefs.getBool("newSetups");
+    Name            = prefs.getString("name");
    // calibrationValue = prefs.getFloat("calibrationFactor");
 
     prefs.end();

@@ -29,6 +29,7 @@ extern bool forceUpdate;
 extern bool weightset;
 extern bool disablesleep;
 extern bool newSetup;
+extern String Name;
 
 extern float h1, t1;
 extern float h2, t2;

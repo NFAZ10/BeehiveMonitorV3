@@ -44,6 +44,7 @@ bool weightset = false;
 int timesincelastrestart = 0;
 float oldbattery = 0.0;
 bool charging = false;
+extern String Name;
 
 Preferences pref;
 
@@ -161,7 +162,12 @@ void loop() {
             uint8_t mac[6];
             WiFi.macAddress(mac);
             char macStr[13];
-            snprintf(macStr, sizeof(macStr), "%02X%02X%02X%02X", mac[2], mac[3], mac[4], mac[5]);
+            if (Name != NULL) {
+                strncpy(macStr, Name.c_str(), sizeof(macStr) - 1);
+                macStr[sizeof(macStr) - 1] = '\0'; // Ensure null-termination
+            } else {
+                snprintf(macStr, sizeof(macStr), "%02X%02X%02X%02X", mac[2], mac[3], mac[4], mac[5]);
+            }
             String topicBase = "beehive/data/";
             topicBase += macStr; // Get the last 4 digits of the MAC address
 

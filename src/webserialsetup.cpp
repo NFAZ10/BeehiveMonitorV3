@@ -77,7 +77,17 @@ void recvMsg(uint8_t *data, size_t len) {
       prefs.end();
       ESP.restart();
 
-    } else
+    }else if(msg.startsWith("NAMESET[")){
+      prefs.begin("beehive", false);
+      int startIndex = msg.indexOf('[') + 1;
+      int endIndex = msg.indexOf(']');
+      if (startIndex > 0 && endIndex > startIndex) {
+        String nameStr = msg.substring(startIndex, endIndex);
+        prefs.putString("name", nameStr);
+      }
+      prefs.end();
+      
+      } else
   
     {
       /* code */

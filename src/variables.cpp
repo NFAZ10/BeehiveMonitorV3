@@ -8,6 +8,7 @@ bool useArduinoCloud = false;
 bool forceUpdate = false;
 bool disablesleep = false;
 bool newSetup = true;
+String Name = "NULL";
 
 
 float h1 = -1, t1 = -1;
@@ -35,7 +36,7 @@ const char* DEVcurrentVersion = "1.2.3DEV";
 
 const char* MAINversionURL = "https://raw.githubusercontent.com/NFAZ10/BeehiveMonitorV3/refs/heads/main/version.txt";
 const char* MAINfirmwareURL = "https://raw.githubusercontent.com/NFAZ10/BeehiveMonitorV3/main/.pio/build/esp32dev/firmware.bin";
-const char* MAINcurrentVersion = "3.1.1";
+const char* MAINcurrentVersion = "3.1.2";
 
 const char* versionURL;
 const char* firmwareURL;
