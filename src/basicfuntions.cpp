@@ -1,10 +1,9 @@
 #include <Arduino.h>
 #include <Preferences.h>
 #include "variables.h"
-
+#include "webserialsetup.h"
 #include <WiFi.h>
 #include <esp_wifi.h>
-#include "wifisetup.h"
 #include "OLED.h"
 
 
@@ -28,7 +27,7 @@ void initSerial() {
     last_weightstore = prefs.getInt("Weight");
     mVA              = prefs.getFloat("mVA");
     newSetup        = prefs.getBool("newSetups");
-    Name            = prefs.getString("name");
+    reversedloadcell = prefs.getBool("reversedloadcell");
    // calibrationValue = prefs.getFloat("calibrationFactor");
 
     prefs.end();
@@ -71,7 +70,7 @@ void initSerial() {
       // Set HX711 into power-down mode (Clock HIGH)
       digitalWrite(HX711_CLK, HIGH);
       delayMicroseconds(100); // Ensure power-down command is sent
-  
+      disconnectWifi();
       Serial.println("Entering Deep Sleep...");
   
       // Convert seconds to microseconds
@@ -90,6 +89,7 @@ void initSerial() {
     // Set HX711 into power-down mode (Clock HIGH)
     digitalWrite(HX711_CLK, HIGH);
     delayMicroseconds(100); // Ensure power-down command is sent
+    
 
     Serial.println("Entering Light Sleep...");
 
@@ -102,8 +102,9 @@ void initSerial() {
     delay(1000);
     // Start light sleep
     esp_light_sleep_start();
-    wmsetup();
+  
     Serial.println("Woke up from Light Sleep");
+    reconnectWifi();
     powerOnOLED();
     delay(2000);
 }

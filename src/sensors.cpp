@@ -82,15 +82,23 @@ void initDHTSensors() {
 
   }
   
-
+ void reverseloadcell() {
+  LoadCell.setReverseOutput();
+  }
 
   void initScale() {
 
     if(debug) Serial.println("Initializing HX711...");
     LoadCell.begin();
     
-    LoadCell.setReverseOutput(); //uncomment to turn a negative output value to positive
-  
+
+    if (reversedloadcell==true) {
+      LoadCell.setReverseOutput();
+    }
+    else {
+
+    }
+
   
     unsigned long stabilizingtime = 2000; // preciscion right after power-up can be improved by adding a few seconds of stabilizing time
     boolean _tare = true; //set this to false if you don't want tare to be performed in the next step

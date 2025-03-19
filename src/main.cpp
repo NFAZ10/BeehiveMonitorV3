@@ -3,13 +3,11 @@
 #include <PubSubClient.h>
 #include <Wire.h>
 #include "esp_task_wdt.h"
-
+#include "webserialsetup.h"
 /////////////////
 ///Our Setups////
 /////////////////
 
-#include "wifisetup.h"
-#include "webserialsetup.h"
 #include "basicfunctions.h"
 #include "sensors.h"
 #include "variables.h"
@@ -18,7 +16,7 @@
 #include <Preferences.h>
 #include "OLED.h"
 
-//#include "ble.h"
+
 
 #define DEBUG 0
 #if DEBUG
@@ -28,8 +26,6 @@
 #endif
 
 
-
-#define WDT_TIMEOUT 50
 
 
 /////////////////
@@ -47,6 +43,7 @@ float oldbattery = 0.0;
 bool charging = false;
 extern String Name;
 
+
 Preferences pref;
 
 void IRAM_ATTR tareButtonISR() {
@@ -60,14 +57,15 @@ void IRAM_ATTR factoryResetISR() {
     Serial.println("Factory Reset Button Pressed");
     newSetup = true; // Set the flag when the interrupt is triggered
     clearPreferences();
-    resetWiFiManager();
+    
     //ESP.restart();
 
 }
 void setup() {
     initSerial();
-    esp_task_wdt_init(WDT_TIMEOUT, true);
-    esp_task_wdt_add(NULL);
+    wifiSetup();
+
+
 
     pinMode(TARE_BUTTON_PIN, INPUT_PULLUP);
     pinMode(FactoryReset_PIN, INPUT_PULLUP);
@@ -82,7 +80,7 @@ void setup() {
 
     setupOLED();
     Serial.println("Starting OLED");
-
+    dashLoop();
     pref.begin("beehive", false);
     newSetup = pref.getBool("newSetup"); // Get the newSetup flag from Preferences
     pref.end();
@@ -99,8 +97,8 @@ void setup() {
                 WebSerial.println("Starting Wifi Setup");
                 Serial.println("Starting Wifi Setup");
 
-                wmsetup();
-                webserial();
+              
+                
                 initMQTT();
 
                 WebSerial.println("Battery is above 3.5V. Entering Loop State.");
@@ -112,7 +110,7 @@ void setup() {
 }
 
 void loop() {
-
+        
         WebSerial.loop();
         checkForUpdates();
 
@@ -123,8 +121,20 @@ void loop() {
             tareScale(); // Call the tare function
         }
 
+        if (reversedloadcell == true) {
+            reverseloadcell();
+        } 
+
         readDHTSensors();
+        updateEXTTemp(temp1);
+        updateEXTHum(h1);
         updateScale();
+        updateweightcard(grams);
+
+      
+     
+
+
         measureBattery();
         if (battery > oldbattery) {
             oldbattery = battery;
@@ -135,7 +145,7 @@ void loop() {
             disablesleep = false;
             charging = false;
         }
-
+        dashLoop();
         updateOLED();
      
         if (WiFi.status() == WL_CONNECTED) {
@@ -157,18 +167,18 @@ void loop() {
             String topicBase = "beehive/data/";
             topicBase += macStr; // Get the last 4 digits of the MAC address
 
-            mqttClient.publish((topicBase + "/temperature1").c_str(), String(temp1).c_str()); delay(1000);
-            mqttClient.publish((topicBase + "/humidity1").c_str(), String(h1).c_str()); delay(1000);
-            mqttClient.publish((topicBase + "/temperature2").c_str(), String(t2).c_str()); delay(1000);
-            mqttClient.publish((topicBase + "/humidity2").c_str(), String(h2).c_str()); delay(1000);
-            mqttClient.publish((topicBase + "/weight").c_str(), String(grams).c_str()); delay(1000);
-            mqttClient.publish((topicBase + "/battery").c_str(), String(voltageDividerReading).c_str()); delay(1000);
-            mqttClient.publish((topicBase + "/backend/version").c_str(), String(currentVersion).c_str()); delay(1000);
-            mqttClient.publish((topicBase + "/mva").c_str(), String(mVA).c_str()); delay(1000);
-            mqttClient.publish((topicBase + "/lbs").c_str(), String(weightInPounds).c_str()); delay(1000);
-            mqttClient.publish((topicBase + "/IP").c_str(), WiFi.localIP().toString().c_str()); delay(1000);
-            mqttClient.publish((topicBase + "/backend/charging").c_str(), String(charging).c_str()); delay(1000);
-            mqttClient.publish((topicBase + "/backend/newSetup").c_str(), String(newSetup).c_str()); delay(1000);
+            mqttClient.publish((topicBase + "/temperature1").c_str(), String(temp1).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/humidity1").c_str(), String(h1).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/temperature2").c_str(), String(t2).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/humidity2").c_str(), String(h2).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/weight").c_str(), String(grams).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/battery").c_str(), String(voltageDividerReading).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/backend/version").c_str(), String(currentVersion).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/mva").c_str(), String(mVA).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/lbs").c_str(), String(weightInPounds).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/IP").c_str(), WiFi.localIP().toString().c_str()); delay(100);
+            mqttClient.publish((topicBase + "/backend/charging").c_str(), String(charging).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/backend/newSetup").c_str(), String(newSetup).c_str()); delay(100);
 
             lastPublishTime = millis(); // Update the last publish time
             Serial.println("///////////////////LOOP///////////////////");
@@ -211,8 +221,9 @@ void loop() {
             timesincelastrestart = 0;
             ESP.restart();
         }
-        delay(5000);
-        clearOLED();
+        delay(1);
+        
+        dashLoop();
         esp_task_wdt_reset();
         if (disablesleep == false) {
             if (battery > 4.15) {
@@ -224,10 +235,12 @@ void loop() {
                 delay(1000);
                 enterLightSleep(1800);
             } else if (battery < 3.7 && battery > 3.5) {
+                clearOLED();
                 WebSerial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
                 Serial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
                 enterLightSleep(3600);
             } else {
+                clearOLED();
                 WebSerial.println("Deep Sleep for 2 Hour.");
                 Serial.println("Battery is below 3.5V. Entering Deep Sleep for 2 Hour.");
                 delay(1000);
@@ -236,7 +249,7 @@ void loop() {
         } else {
             // Do nothing
         }
-        delay(1000);
+        delay(100);
     
 }
 

@@ -15,6 +15,7 @@ void measureBattery();
 void recalibrateScale();
 void handleSerialCommands();
 void processCommand();
+void reverseloadcell() ;
 
 extern HX711_ADC LoadCell();
 

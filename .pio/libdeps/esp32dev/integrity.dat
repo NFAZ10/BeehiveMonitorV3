@@ -1,13 +1,12 @@
-bblanchon/ArduinoJson@7.3.0
-mathieucarbou/AsyncTCP@^3.3.2
-mathieucarbou/ESPAsyncWebServer@^3.6.0
-tzapu/WiFiManager@^2.0.17
-lexus2k/ssd1306@^1.8.5
-h2zero/NimBLE-Arduino@^2.2.3
-adafruit/SdFat - Adafruit Fork@^2.2.54
 olkal/HX711_ADC@1.2.12
-adafruit/DHT sensor library@1.4.6
-adafruit/Adafruit Unified Sensor@1.1.15
+ESP32Async/ESPAsyncWebServer@3.7.1
+ESP32Async/AsyncTCP@3.3.5
+ayushsharma82/NetWizard@^1.0.0
 knolleary/PubSubClient@2.8
+adafruit/Adafruit Unified Sensor@1.1.15
 ayushsharma82/WebSerial@^2.0.8
 adafruit/Adafruit SSD1306@^2.5.13
+adafruit/DHT sensor library@1.4.6
+adafruit/SdFat - Adafruit Fork@^2.2.54
+lexus2k/ssd1306@^1.8.5
+bblanchon/ArduinoJson@7.3.0
