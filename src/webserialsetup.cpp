@@ -147,6 +147,9 @@ void recvMsg(uint8_t *data, size_t len) {
       prefs.putBool("reversedloadcell",reversedloadcell);
       prefs.end();
       WebSerial.println("Reversed Load Cell");
+      WebSerial.println("Rebooting...");
+      delay(1000);
+     // ESP.restart();
      
     } else if(msg == "off") {
    //   turnOffWiFi();
@@ -205,6 +208,7 @@ void recvMsg(uint8_t *data, size_t len) {
       Serial.println("Tare Button Triggered");
       tareRequested = true;
     });
+
     reverseloadcellcard.attachCallback([&](int value){
       Serial.println("[Card1] Button Callback Triggered: "+String((value == 1)?"true":"false"));
       reverseloadcellcard.update(value);
@@ -216,6 +220,9 @@ void recvMsg(uint8_t *data, size_t len) {
      
       reverseloadcellcard.update(1);
       dashboard.sendUpdates();
+      WebSerial.println("Rebooting...");
+      delay(1000);
+     // ESP.restart();
     });
     
 

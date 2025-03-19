@@ -43,7 +43,7 @@ void connectToMQTT() {
             Serial.println(" try again in 5 seconds");
             // Wait 5 seconds before retrying
             static int retryCount = 0;
-            delay(5000);
+            delay(500);
             retryCount++;
             if (retryCount >= 5) {
                 Serial.println("Failed to connect to MQTT after 5 attempts. Moving on...");

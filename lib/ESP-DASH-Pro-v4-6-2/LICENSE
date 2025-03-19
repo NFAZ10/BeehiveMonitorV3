@@ -1,0 +1,71 @@
+SOFTT COMMERCIAL LICENSE 1.2
+
+1. Definitions
+
+1.1. "License" refers to the rights granted under the terms and conditions of this License Agreement.
+
+1.2. "Licensor" means the entity granting this License, which may include its affiliates and related companies.
+
+1.3. "Licensee" means the individual or legal entity exercising rights under this License Agreement.
+
+1.4. "Licensed Material" refers to the specific software or product to which this License Agreement applies.
+
+2. Grant of License
+
+Subject to the terms and conditions of this License Agreement, Licensor hereby grants Licensee a non-exclusive, worldwide, royalty-free, and perpetual license to use, reproduce, modify, publicly display and publicly perform the Licensed Material solely for the purpose of embedding it into devices or products, developed and sold under Licensee’s own brand name or white-label products.
+
+3. Restrictions
+
+3.1. Licensee shall not sublicense the Licensed Material to any third party.
+
+3.2. Licensee shall not use the Licensed Material for any purpose other than embedding it into devices or products developed and sold under Licensee’s own brand name or white-label products. Any independent distribution or licensing to third parties is strictly prohibited.
+
+3.3. If Licensee distributes the firmware of their product, which incorporates the Licensed Material, in clear text, such distribution shall be considered independent distribution and must comply with the restrictions outlined in this License Agreement.
+
+3.4. If the Licensed Material is a software library and Licensee’s firmware is distributed in clear text, Licensee must pre-compile and statically link the Licensed Material. The Licensed Material must not be included in any form that allows for its extraction or separate use.
+
+3.5. Licensee shall not use the Licensed Material to build, develop, or offer any product or service that directly or indirectly competes with the products or services offered by Licensor.
+
+4. Confidentiality
+
+Licensee agrees to maintain the confidentiality of the Licensed Material and any proprietary information provided by Licensor. Licensee shall not disclose such information to any third party without the prior written consent of Licensor.
+
+5. Audit Rights
+
+Licensor reserves the right to audit Licensee’s use of the Licensed Material to ensure compliance with the terms of this License Agreement. Licensee agrees to cooperate fully with any such audit and to provide reasonable access to relevant records and information.
+
+6. No Warranty
+
+The Licensed Material is provided "as-is," without any warranty of any kind. Licensor makes no representations or warranties regarding the Licensed Material, including, but not limited to, any implied warranties of merchantability or fitness for a particular purpose.
+
+7. Limitation of Liability
+
+In no event shall Licensor be liable to Licensee or any third party for any direct, indirect, special, incidental, or consequential damages arising out of or in connection with the use or inability to use the Licensed Material, even if Licensor has been advised of the possibility of such damages.
+
+8. Updates and Maintenance
+
+8.1. Licensor is under no obligation to provide updates or maintenance for the Licensed Material. Any updates or maintenance provided shall be subject to the terms of this License Agreement.
+
+8.2. If the Licensed Material is a software library sold with a "Free lifetime updates" policy, the Licensee shall not be required to pay for any future updates. Any updates provided under such a policy are subject to availability.
+
+9. Intellectual Property Rights
+
+All intellectual property rights in the Licensed Material, including any modifications or enhancements created by Licensee based on the Licensed Material, shall remain the exclusive property of Licensor. Licensee shall not claim any ownership rights in the Licensed Material.
+
+10. Usage Reporting
+
+Licensor may request, in writing, reports on the use of the Licensed Material, including the number and distribution of devices integrating the Licensed Material. Licensee agrees to provide such reports within a reasonable time frame upon receiving the request.
+
+11. Export Compliance
+
+Licensee shall comply with all applicable export control laws and regulations and shall not use or distribute the Licensed Material in violation of such laws.
+
+12. Termination
+
+This License Agreement shall terminate automatically upon any breach of its terms and conditions by Licensee. Upon termination, Licensee shall immediately cease all use and distribution of the Licensed Material and destroy all copies in its possession.
+
+13. Miscellaneous
+
+13.1. This License Agreement constitutes the entire agreement between the parties and supersedes all prior and contemporaneous agreements, proposals, or representations, whether written or oral, concerning its subject matter.
+
+13.2. This License Agreement shall be governed by and construed in accordance with the laws of Ludhiana - 141002, Punjab, India. Any legal action or proceeding arising out of or relating to this License Agreement shall be subject to the exclusive jurisdiction of the state and federal courts located in Ludhiana - 141002, Punjab, India, and the parties hereby consent to the personal jurisdiction of such courts.
