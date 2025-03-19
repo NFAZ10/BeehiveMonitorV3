@@ -35,7 +35,12 @@ void initSerial() {
       Serial.println(String("Last Weight=") + last_weightstore);
       Serial.println(String("Last mVA=") + mVA);
       Serial.println(String("Stored Calibration=") + calibrationValue);
-      prefs.begin("movingAvg", false);
+      Serial.println(String("Reversed Load Cell=") + reversedloadcell);
+      WebSerial.println(String("Last Weight=") + last_weightstore);
+      WebSerial.println(String("Last mVA=") + mVA);
+      WebSerial.println(String("Stored Calibration=") + calibrationValue);
+      WebSerial.println(String("Reversed Load Cell=") + reversedloadcell);
+      
   }
 
 

@@ -82,9 +82,6 @@ void initDHTSensors() {
 
   }
   
- void reverseloadcell() {
-  LoadCell.setReverseOutput();
-  }
 
   void initScale() {
 
@@ -93,6 +90,7 @@ void initDHTSensors() {
     
 
     if (reversedloadcell==true) {
+      WebSerial.println("******Reversed Load Cell*******");
       LoadCell.setReverseOutput();
     }
     else {
@@ -206,6 +204,7 @@ void measureBattery() {
 
 
 void updateScale() {
+  WebSerial.println(String("LoadCell Reversed: ") + reversedloadcell);
   // Display weighing on OLED
   display.clearDisplay();
   display.setTextSize(2); // Set text size to 2 for larger text
@@ -317,3 +316,6 @@ void recalibrateScale(float knownWeight) {
 }
 
 
+void reverseloadcell() {
+  LoadCell.setReverseOutput();
+  }
