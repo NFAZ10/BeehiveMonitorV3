@@ -8,6 +8,7 @@ bool useArduinoCloud = false;
 bool forceUpdate = false;
 bool disablesleep = false;
 bool newSetup = true;
+bool reversedloadcell = false;
 String Name;
 
 

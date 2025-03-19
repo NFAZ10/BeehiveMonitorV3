@@ -5,11 +5,88 @@
 #include <Preferences.h>
 #include "basicfunctions.h"
 #include "ota.h"
+#include <ESPDashPro.h>
+#include <NetWizard.h>
 
 AsyncWebServer server(80);  // Define WebServer instance
+NetWizard NW(&server);
+ESPDash dashboard(&server); 
 
+
+Card card1(&dashboard, STATUS_CARD, "WiFi Status", DASH_STATUS_SUCCESS);
+Card temperature(&dashboard, TEMPERATURE_CARD, "Ext Temperature", "°F");
+Card humidity(&dashboard, HUMIDITY_CARD, "Ext Humidity", "%");
+Card weightcard(&dashboard, GENERIC_CARD, "Weight", "g");
+
+
+
+
+Card resetNW(&dashboard, PUSH_BUTTON_CARD, "Reset Wifi Setup");
+Card tarecard(&dashboard, PUSH_BUTTON_CARD, "Tare Scale");
+Card reverseloadcellcard(&dashboard, BUTTON_CARD, "Reverse Load Cell");
+Card linkcard(&dashboard, LINK_CARD, "Serial Monitor");
+
+Tab tab1(&dashboard, "Settings");
+
+void setcardtabs(){
+resetNW.setTab(&tab1);
+tarecard.setTab(&tab1);
+reverseloadcellcard.setTab(&tab1);
+linkcard.setTab(&tab1);
+}
+
+
+
+void updateEXTTemp(float temp) {
+  temperature.update(temp);
+}
+void updateEXTHum(float hum) {
+  humidity.update(hum);
+}
+
+void updateweightcard(float dgrams) {
+  weightcard.update(dgrams);
+}
+
+// Setup configuration parameters
 
 extern Preferences prefs;
+
+void wifiSetup(){
+
+  card1.attachCallback([&](){
+    Serial.println("[Card1] Push Button Triggered");
+    NW.erase();
+  });
+
+  NW.autoConnect("NetWizard Demo", "");  // <-- Add this line
+  NW.setStrategy(NetWizardStrategy::NON_BLOCKING);
+  NW.setPortalTimeout(1000);
+  linkcard.update("/webserial");
+ 
+
+    if (NW.getConnectionStatus() == NetWizardConnectionStatus::CONNECTED) {
+      // Print network details
+      Serial.print("Connected to ");
+      Serial.println(NW.getSSID());
+      Serial.print("IP address: ");
+      Serial.println(WiFi.localIP());;
+      card1.update("Connected", DASH_STATUS_SUCCESS);
+      NW.stopPortal();
+      delay(1000);
+      webserial();
+    } else {
+      Serial.println("Not connected to any WiFi");
+      card1.update("Not Connected", DASH_STATUS_WARNING);
+    }
+
+
+}
+
+void NWLoop(){
+  NW.loop();
+}
+
 
 void recvMsg(uint8_t *data, size_t len) {
     WebSerial.println("Received Data...");
@@ -61,8 +138,16 @@ void recvMsg(uint8_t *data, size_t len) {
     } else if(msg == "otaforce") {
         performOTA();
      // connectToWiFi();
-    } else if(msg == "ap") {
-     // createAccessPointIfNeeded();
+    } else if(msg == "REVERSE") {
+      WebSerial.println("Reversing Load Cell");
+     
+      reversedloadcell = !reversedloadcell;
+      WebSerial.println(reversedloadcell);
+      prefs.begin("beehive", false);
+      prefs.putBool("reversedloadcell",reversedloadcell);
+      prefs.end();
+      WebSerial.println("Reversed Load Cell");
+     
     } else if(msg == "off") {
    //   turnOffWiFi();
     } else if(msg == "pref") {
@@ -100,10 +185,51 @@ void recvMsg(uint8_t *data, size_t len) {
   
   }
 
+
   void webserial() {
+    Serial.println("Initializing WebSerial && DashPro...");
     WebSerial.begin(&server); // Start WebSerial
-    WebSerial.onMessage(recvMsg);
-    server.begin();           // Start WebServer
+    WebSerial.onMessage(recvMsg);      
+    server.begin();     // Start WebServer
     WebSerial.println("WebSerial initialized!");
+
+    resetNW.attachCallback([&](){
+      Serial.println("[Card1] Push Button Triggered");
+      NW.erase();
+
+      delay(1000);
+      NW.startPortal();
+
+    });
+    tarecard.attachCallback([&](){
+      Serial.println("Tare Button Triggered");
+      tareRequested = true;
+    });
+    reverseloadcellcard.attachCallback([&](int value){
+      Serial.println("[Card1] Button Callback Triggered: "+String((value == 1)?"true":"false"));
+      reverseloadcellcard.update(value);
+      reversedloadcell = !reversedloadcell;
+      prefs.begin("beehive", false);
+      prefs.putBool("reversedloadcell",reversedloadcell);
+      prefs.end();
+      WebSerial.println("Reversed Load Cell");
+     
+      reverseloadcellcard.update(1);
+      dashboard.sendUpdates();
+    });
+    
+
 }
 
+
+void reconnectWifi(){
+  NW.connect();
+}
+void disconnectWifi(){
+  NW.disconnect();
+}
+
+void dashLoop(){
+  setcardtabs();
+  dashboard.sendUpdates();
+}
