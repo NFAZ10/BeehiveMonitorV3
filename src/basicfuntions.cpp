@@ -57,7 +57,7 @@ void initSerial() {
     Serial.println(String("Reversed Load Cell=") + TEMPreversedloadcell);
     prefs.end();
 
-  
+  }
 
   
   void clearPreferences() {
