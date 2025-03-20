@@ -29,7 +29,7 @@ extern bool forceUpdate;
 extern bool weightset;
 extern bool disablesleep;
 extern bool newSetup;
-extern bool reversedloadcell;
+extern int reversedloadcell;
 extern String Name;
 
 extern float h1, t1;

@@ -45,11 +45,11 @@ void initDHTSensors() {
      LoadCell.refreshDataSet();
      LoadCell.resetSamplesIndex();
      //LoadCell.setTareOffset(0);
-  
+     delay(1000);
   
     LoadCell.tareNoDelay();
     
-      Serial.println("Tare started...");
+    Serial.println("Tare started...");
     
   
     // Reset variables after taring
@@ -318,4 +318,6 @@ void recalibrateScale(float knownWeight) {
 
 void reverseloadcell() {
   LoadCell.setReverseOutput();
+  LoadCell.tareNoDelay();  
+
   }

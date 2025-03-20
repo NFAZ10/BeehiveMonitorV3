@@ -9,9 +9,9 @@
 #include <NetWizard.h>
 
 AsyncWebServer server(80);  // Define WebServer instance
-NetWizard NW(&server);
-ESPDash dashboard(&server); 
 
+ESPDash dashboard(&server,"/dashboard",false); 
+NetWizard NW(&server);
 
 Card card1(&dashboard, STATUS_CARD, "WiFi Status", DASH_STATUS_SUCCESS);
 Card temperature(&dashboard, TEMPERATURE_CARD, "Ext Temperature", "°F");
@@ -54,33 +54,10 @@ extern Preferences prefs;
 
 void wifiSetup(){
 
-  card1.attachCallback([&](){
-    Serial.println("[Card1] Push Button Triggered");
-    NW.erase();
-  });
-
-  NW.autoConnect("NetWizard Demo", "");  // <-- Add this line
-  NW.setStrategy(NetWizardStrategy::NON_BLOCKING);
-  NW.setPortalTimeout(1000);
-  linkcard.update("/webserial");
- 
-
-    if (NW.getConnectionStatus() == NetWizardConnectionStatus::CONNECTED) {
-      // Print network details
-      Serial.print("Connected to ");
-      Serial.println(NW.getSSID());
-      Serial.print("IP address: ");
-      Serial.println(WiFi.localIP());;
-      card1.update("Connected", DASH_STATUS_SUCCESS);
-      NW.stopPortal();
-      delay(1000);
-      webserial();
-    } else {
-      Serial.println("Not connected to any WiFi");
-      card1.update("Not Connected", DASH_STATUS_WARNING);
-    }
-
-
+  NW.setStrategy(NetWizardStrategy::BLOCKING);
+  NW.autoConnect("BeehiveMonitorAP", "");  // <-- Add this line
+  NW.setPortalTimeout(30000);
+  
 }
 
 void NWLoop(){
@@ -141,13 +118,19 @@ void recvMsg(uint8_t *data, size_t len) {
     } else if(msg == "REVERSE") {
       WebSerial.println("Reversing Load Cell");
      
-      reversedloadcell = !reversedloadcell;
+      reversedloadcell = 1;
       WebSerial.println(reversedloadcell);
       prefs.begin("beehive", false);
-      prefs.putBool("reversedloadcell",reversedloadcell);
+      prefs.putInt("reversed",1);
       prefs.end();
       WebSerial.println("Reversed Load Cell");
       WebSerial.println("Rebooting...");
+
+      if (reversedloadcell == 1) {
+        WebSerial.println("******Reversed Load Cell*******");
+        reverseloadcell();
+      }
+
       delay(1000);
      // ESP.restart();
      
@@ -195,6 +178,7 @@ void recvMsg(uint8_t *data, size_t len) {
     WebSerial.onMessage(recvMsg);      
     server.begin();     // Start WebServer
     WebSerial.println("WebSerial initialized!");
+    linkcard.update("/webserial");
 
     resetNW.attachCallback([&](){
       Serial.println("[Card1] Push Button Triggered");
@@ -213,8 +197,9 @@ void recvMsg(uint8_t *data, size_t len) {
       Serial.println("[Card1] Button Callback Triggered: "+String((value == 1)?"true":"false"));
       reverseloadcellcard.update(value);
       reversedloadcell = !reversedloadcell;
+      WebSerial.println(String("Loadcell ")+reversedloadcell);
       prefs.begin("beehive", false);
-      prefs.putBool("reversedloadcell",reversedloadcell);
+      prefs.putBool("reversed",reversedloadcell);
       prefs.end();
       WebSerial.println("Reversed Load Cell");
      

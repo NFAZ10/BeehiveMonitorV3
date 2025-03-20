@@ -27,7 +27,7 @@ void initSerial() {
     last_weightstore = prefs.getInt("Weight");
     mVA              = prefs.getFloat("mVA");
     newSetup        = prefs.getBool("newSetups");
-    reversedloadcell = prefs.getBool("reversedloadcell");
+    reversedloadcell = prefs.getInt("reversed");
    // calibrationValue = prefs.getFloat("calibrationFactor");
 
     prefs.end();
@@ -35,14 +35,27 @@ void initSerial() {
       Serial.println(String("Last Weight=") + last_weightstore);
       Serial.println(String("Last mVA=") + mVA);
       Serial.println(String("Stored Calibration=") + calibrationValue);
-      Serial.println(String("Reversed Load Cell=") + reversedloadcell);
+
+      Serial.println(String("LOADED**Reversed Load Cell=") + reversedloadcell);
+
       WebSerial.println(String("Last Weight=") + last_weightstore);
       WebSerial.println(String("Last mVA=") + mVA);
       WebSerial.println(String("Stored Calibration=") + calibrationValue);
       WebSerial.println(String("Reversed Load Cell=") + reversedloadcell);
       
+
   }
 
+  void printPreferences() {
+    prefs.begin("beehive",false);
+   int TEMPlast_weightstore = prefs.getInt("Weight");
+   float TEMPmVA              = prefs.getFloat("mVA");
+   int TEMPreversedloadcell = prefs.getInt("reversed");
+    Serial.println("Preferences:");
+    Serial.println(String("Last Weight=") + TEMPlast_weightstore);
+    Serial.println(String("Last mVA=") + TEMPmVA);
+    Serial.println(String("Reversed Load Cell=") + TEMPreversedloadcell);
+    prefs.end();
 
   
 
@@ -51,13 +64,13 @@ void initSerial() {
     prefs.begin("beehive",false);
     prefs.putInt("Weight",0);
     prefs.putFloat("mVA",0.0);
-    prefs.putBool("newSetup",true);
     last_weightstore = prefs.getInt("Weight");
     mVA              = prefs.getFloat("mVA");
     Serial.println(String("Last Weight=") + last_weightstore);
     Serial.println(String("Last mVA=") + mVA);
     Serial.println("Preferences Cleared");
     prefs.end();
+    prefs.clear();
   }
 
 
