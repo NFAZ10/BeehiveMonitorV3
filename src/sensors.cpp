@@ -319,4 +319,5 @@ void recalibrateScale(float knownWeight) {
 void reverseloadcell() {
   LoadCell.setReverseOutput();
   LoadCell.tareNoDelay();  
+
   }

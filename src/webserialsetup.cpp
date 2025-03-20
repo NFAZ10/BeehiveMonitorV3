@@ -125,10 +125,12 @@ void recvMsg(uint8_t *data, size_t len) {
       prefs.end();
       WebSerial.println("Reversed Load Cell");
       WebSerial.println("Rebooting...");
+
       if (reversedloadcell == 1) {
         WebSerial.println("******Reversed Load Cell*******");
         reverseloadcell();
       }
+
       delay(1000);
      // ESP.restart();
      
