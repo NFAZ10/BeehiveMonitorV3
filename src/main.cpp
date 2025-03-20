@@ -63,7 +63,15 @@ void IRAM_ATTR factoryResetISR() {
 }
 void setup() {
     initSerial();
+    setupOLED();
+    printToOLED("WIFISETUP");
     wifiSetup();
+    printToOLED("DASHSETUP");
+    webserial();
+
+    String ipAddress = WiFi.localIP().toString();
+    printToOLED("IP: " + ipAddress);
+    delay(1000);
 
 
 
@@ -78,17 +86,22 @@ void setup() {
     Serial.println("Starting BLE");
     Serial.println("Starting Serial");
 
-    setupOLED();
+    
     Serial.println("Starting OLED");
-    dashLoop();
+    
     pref.begin("beehive", false);
     newSetup = pref.getBool("newSetup"); // Get the newSetup flag from Preferences
     pref.end();
 
 
-        Serial.println("Install mode");
-        initDHTSensors();
-        initScale();
+    loadPreferences();
+    initDHTSensors();
+    initScale();
+
+    if (reversedloadcell == 1) {
+        WebSerial.println("******Reversed Load Cell*******");
+        reverseloadcell();
+    } 
 
         WebSerial.println("Checking Battery Level");
         Serial.println("Checking Battery Level");
@@ -96,11 +109,7 @@ void setup() {
             if (battery > 3.5 || battery == 0) {
                 WebSerial.println("Starting Wifi Setup");
                 Serial.println("Starting Wifi Setup");
-
-              
-                
                 initMQTT();
-
                 WebSerial.println("Battery is above 3.5V. Entering Loop State.");
             } else if (battery < 3.5 && battery > 0) {
                 enterDeepSleep(3600);
@@ -110,7 +119,8 @@ void setup() {
 }
 
 void loop() {
-        
+    WebSerial.println("/******************************************************/");
+        NWLoop();
         WebSerial.loop();
         checkForUpdates();
 
@@ -121,9 +131,7 @@ void loop() {
             tareScale(); // Call the tare function
         }
 
-        if (reversedloadcell == true) {
-            reverseloadcell();
-        } 
+      
 
         readDHTSensors();
         updateEXTTemp(temp1);
@@ -145,7 +153,6 @@ void loop() {
             disablesleep = false;
             charging = false;
         }
-        dashLoop();
         updateOLED();
      
         if (WiFi.status() == WL_CONNECTED) {
@@ -217,13 +224,13 @@ void loop() {
         timesincelastrestart++;
         Serial.println("Time Since Last Restart: " + String(timesincelastrestart));
         WebSerial.println("Time Since Last Restart: " + String(timesincelastrestart));
-        if (timesincelastrestart > 5) {
+        if (timesincelastrestart > 5 && disablesleep == false) {
             timesincelastrestart = 0;
             ESP.restart();
         }
         delay(1);
         
-        dashLoop();
+        
         esp_task_wdt_reset();
         if (disablesleep == false) {
             if (battery > 4.15) {
@@ -249,6 +256,7 @@ void loop() {
         } else {
             // Do nothing
         }
+        printPreferences();
         delay(100);
     
 }

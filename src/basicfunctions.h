@@ -7,7 +7,7 @@ void initSerial();
 void loadPreferences();
 void clearPreferences();
 void putPreferences();
-  
+void printPreferences();
 void enterDeepSleep(uint64_t sleepTimeSeconds);
 void enterLightSleep(uint64_t sleepTimeSeconds);
 
