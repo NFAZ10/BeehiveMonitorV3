@@ -236,28 +236,28 @@ void loop() {
             if (battery > 4.15) {
                 WebSerial.println("Battery is above 4.15V. Restarting Loop.");
                 Serial.println("Battery is above 4.15V. Restarting Loop.");
-            } else if (battery < 4.15 && battery > 3.7) {
+            } else if (battery < 4.15 && battery > 3.9) {
                 WebSerial.println("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
                 Serial.println("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
                 delay(1000);
-                enterLightSleep(1800);
-            } else if (battery < 3.7 && battery > 3.5) {
+                enterLightSleep(1800);//30 minutes
+            } else if (battery < 3.9 && battery > 3.7) {
                 clearOLED();
                 WebSerial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
                 Serial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
-                enterLightSleep(3600);
+                enterLightSleep(3600);//1 hour
             } else {
                 clearOLED();
-                WebSerial.println("Deep Sleep for 2 Hour.");
+                WebSerial.println("Deep Sleep for 3 Hours.");
                 Serial.println("Battery is below 3.5V. Entering Deep Sleep for 2 Hour.");
                 delay(1000);
-                enterDeepSleep(7200);
+                enterDeepSleep(10800); // 3 hours
             }
         } else {
             // Do nothing
         }
         printPreferences();
-        delay(100);
+        delay(1000*30);//30 seconds
     
 }
 
