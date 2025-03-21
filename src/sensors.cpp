@@ -243,6 +243,10 @@ WebSerial.println("Reading Scale");
 
       grams= total/sampleCount;
 
+    
+    if (grams >= -5 && grams <= 5) {
+      grams = 0;
+    }
 
       WebSerial.println(String("Last Weight: ") + last_weightstore);
       grams=grams+last_weightstore; //set offset from last weight
