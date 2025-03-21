@@ -10,7 +10,7 @@
 
 AsyncWebServer server(80);  // Define WebServer instance
 
-ESPDash dashboard(&server,"/dashboard",false); 
+ESPDash dashboard(&server,"/",false); 
 NetWizard NW(&server);
 
 Card card1(&dashboard, STATUS_CARD, "WiFi Status", DASH_STATUS_SUCCESS);
