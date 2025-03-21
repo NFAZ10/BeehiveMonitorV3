@@ -110,8 +110,12 @@ void recvMsg(uint8_t *data, size_t len) {
       WebSerial.println("Debug Set");
     } else if(msg == "sleep") {
      disablesleep = false;
+     WebSerial.println("Sleep Enabled");
+     delay(1000);
+      ESP.restart();
     } else if(msg == "wake") {
      disablesleep = true;
+     WebSerial.println("Sleep Disabled");
     } else if(msg == "otaforce") {
         performOTA();
      // connectToWiFi();

@@ -115,6 +115,7 @@ void setup() {
                 enterDeepSleep(3600);
             }
         }
+        disablesleep = false;
     
 }
 
