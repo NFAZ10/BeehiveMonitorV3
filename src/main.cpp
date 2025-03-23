@@ -61,7 +61,25 @@ void IRAM_ATTR factoryResetISR() {
     //ESP.restart();
 
 }
+#include "esp_task_wdt.h"
+
+#define WDT_TIMEOUT_SECONDS 10
+
 void setup() {
+
+    // Define and initialize WDT config
+    const esp_task_wdt_config_t wdt_config = {
+        .timeout_ms = WDT_TIMEOUT_SECONDS * 1000,
+        .idle_core_mask = (1 << portNUM_PROCESSORS) - 1, // All cores
+        .trigger_panic = true,
+    };
+
+    // Initialize and register the WDT
+    esp_task_wdt_init(&wdt_config);
+    esp_task_wdt_add(NULL); // Add current (main) task
+
+    // Your other setup code
+
     initSerial();
     setupOLED();
     printToOLED("WIFISETUP");
@@ -131,7 +149,7 @@ void loop() {
             Serial.println("Tare Button Pressed");
             tareScale(); // Call the tare function
         }
-
+        esp_task_wdt_reset();
       
 
         readDHTSensors();
@@ -155,7 +173,7 @@ void loop() {
             charging = false;
         }
         updateOLED();
-     
+        esp_task_wdt_reset();
         if (WiFi.status() == WL_CONNECTED) {
             if (!mqttClient.connected()) {
                 checkForUpdates();
@@ -215,7 +233,7 @@ void loop() {
         WebSerial.println(String("Weight Test:  ") + weight);
         pref.putString("name", Name);
         pref.end();
-
+        esp_task_wdt_reset();
         if (tareRequested) {
             tareRequested = false; // Clear the flag
             tareDisplay(); // Call the tare function
@@ -257,7 +275,7 @@ void loop() {
         } else {
             // Do nothing
         }
-        printPreferences();
+        printPreferences();esp_task_wdt_reset();
         delay(1000*30);//30 seconds
     
 }
