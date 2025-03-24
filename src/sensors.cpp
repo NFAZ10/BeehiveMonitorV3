@@ -7,6 +7,7 @@
 #include <Preferences.h>
 #include <ArduinoJson.h>
 #include "variables.h"
+#include <esp_task_wdt.h>
 #include "webserialsetup.h"
 #include "OLED.h"
 
@@ -213,13 +214,13 @@ void updateScale() {
   display.print("Weighing: ");
   display.display(); // Display the text
   static bool newDataReady = false;
-  int sampleCount = 100;
+  int sampleCount = 50;
   int total = 0 ;
 if(debug){
 Serial.println("Reading Scale");
 WebSerial.println("Reading Scale");
 
-
+esp_task_wdt_reset();
 }
  
    for (int i = 0; i < sampleCount; i++) {
@@ -247,7 +248,7 @@ WebSerial.println("Reading Scale");
     if (grams >= -5 && grams <= 5) {
       grams = 0;
     }
-
+    esp_task_wdt_reset();
       WebSerial.println(String("Last Weight: ") + last_weightstore);
       grams=grams+last_weightstore; //set offset from last weight
 

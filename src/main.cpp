@@ -63,23 +63,22 @@ void IRAM_ATTR factoryResetISR() {
 }
 #include "esp_task_wdt.h"
 
-#define WDT_TIMEOUT_SECONDS 10
-
-void setup() {
+#define WDT_TIMEOUT_SECONDS 60
 
     // Define and initialize WDT config
     const esp_task_wdt_config_t wdt_config = {
-        .timeout_ms = WDT_TIMEOUT_SECONDS * 1000,
-        .idle_core_mask = (1 << portNUM_PROCESSORS) - 1, // All cores
+        .timeout_ms = 1200000,
+        .idle_core_mask = 0,
         .trigger_panic = true,
     };
 
-    // Initialize and register the WDT
-    esp_task_wdt_init(&wdt_config);
-    esp_task_wdt_add(NULL); // Add current (main) task
+void setup() {
 
+
+
+  
     // Your other setup code
-
+    esp_task_wdt_reset();
     initSerial();
     setupOLED();
     printToOLED("WIFISETUP");
@@ -90,7 +89,7 @@ void setup() {
     String ipAddress = WiFi.localIP().toString();
     printToOLED("IP: " + ipAddress);
     delay(1000);
-
+    esp_task_wdt_reset();
 
 
     pinMode(TARE_BUTTON_PIN, INPUT_PULLUP);
@@ -103,7 +102,7 @@ void setup() {
 
     Serial.println("Starting BLE");
     Serial.println("Starting Serial");
-
+    esp_task_wdt_reset();
     
     Serial.println("Starting OLED");
     
@@ -115,12 +114,12 @@ void setup() {
     loadPreferences();
     initDHTSensors();
     initScale();
-
+    esp_task_wdt_reset();
     if (reversedloadcell == 1) {
         WebSerial.println("******Reversed Load Cell*******");
         reverseloadcell();
     } 
-
+    esp_task_wdt_reset();
         WebSerial.println("Checking Battery Level");
         Serial.println("Checking Battery Level");
         if (disablesleep == false) {
@@ -134,15 +133,22 @@ void setup() {
             }
         }
         disablesleep = false;
-    
+          // Initialize and register the WDT
+
 }
 
 void loop() {
+
+    esp_task_wdt_deinit();
+    esp_task_wdt_init(&wdt_config);
+    esp_task_wdt_add(NULL); // Add current (main) task
+
+        esp_task_wdt_reset();
     WebSerial.println("/******************************************************/");
         NWLoop();
         WebSerial.loop();
         checkForUpdates();
-
+        esp_task_wdt_reset();
         if (tareRequested) {
             tareRequested = false; // Clear the flag
             tareDisplay(); // Call the tare function
@@ -172,6 +178,7 @@ void loop() {
             disablesleep = false;
             charging = false;
         }
+        esp_task_wdt_reset();
         updateOLED();
         esp_task_wdt_reset();
         if (WiFi.status() == WL_CONNECTED) {
@@ -180,7 +187,7 @@ void loop() {
                 connectToMQTT();
             }
             mqttClient.loop();
-
+            esp_task_wdt_reset();
             uint8_t mac[6];
             WiFi.macAddress(mac);
             char macStr[13];
