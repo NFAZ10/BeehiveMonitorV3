@@ -208,6 +208,9 @@ void loop() {
     if (timesincelastrestart > 5 && disablesleep == false) {
         timesincelastrestart = 0;
         ESP.restart();
+    }else if (timesincelastrestart > 20 && disablesleep == true) {
+        timesincelastrestart = 0;
+        ESP.restart();
     }
     delay(1);
 
