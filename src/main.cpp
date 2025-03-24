@@ -110,7 +110,7 @@ void setup() {
     newSetup = pref.getBool("newSetup"); // Get the newSetup flag from Preferences
     pref.end();
 
-
+    checkForUpdates();
     loadPreferences();
     initDHTSensors();
     initScale();
@@ -147,7 +147,7 @@ void loop() {
     WebSerial.println("/******************************************************/");
         NWLoop();
         WebSerial.loop();
-        checkForUpdates();
+        
         esp_task_wdt_reset();
         if (tareRequested) {
             tareRequested = false; // Clear the flag
