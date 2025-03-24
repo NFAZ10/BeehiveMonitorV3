@@ -258,6 +258,7 @@ void loop() {
         
         
         esp_task_wdt_reset();
+        esp_task_wdt_deinit();
         if (disablesleep == false) {
             if (battery > 4.15) {
                 WebSerial.println("Battery is above 4.15V. Restarting Loop.");
