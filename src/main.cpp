@@ -238,7 +238,7 @@ void loop() {
             WebSerial.println("Deep Sleep for 3 Hours.");
             Serial.println("Battery is below 3.5V. Entering Deep Sleep for 2 Hour.");
             delay(1000);
-            enterDeepSleep(10800); // 3 hours
+            enterLightSleep(10800); // 3 hours
         }
     } else {
         // Do nothing

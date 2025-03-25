@@ -200,7 +200,7 @@ void updateScale() {
 
     grams = total / sampleCount;
 
-    if (grams >= -5 && grams <= 5) {
+    if (grams >= -20 && grams <= 20) {
         grams = 0;
     }
 
