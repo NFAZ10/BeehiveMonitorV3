@@ -199,9 +199,10 @@ void updateScale() {
     }
 
     grams = total / sampleCount;
-
+WebSerial.println(String("RawGrams: ") + grams);
     if (grams >= -20 && grams <= 20) {
         grams = 0;
+        WebSerial.println("Did not break threshold 20+/-.");
     }
 
     WebSerial.println(String("Last Weight: ") + last_weightstore);
