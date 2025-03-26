@@ -244,6 +244,6 @@ void loop() {
         // Do nothing
     }
     printPreferences();
-    delay(1000 * 30); // 30 seconds
+    enterLightSleep(30);
 }
 
