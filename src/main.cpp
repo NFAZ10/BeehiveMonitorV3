@@ -37,7 +37,7 @@ float oldbattery = 0.0;
 bool charging = false;
 extern String Name;
 
-const float TEMP_SENSITIVITY = 187.5;  // grams per degree Celsius
+const float TEMP_SENSITIVITY = 190;  // grams per degree Celsius
 const float T_BASELINE = 0.1;          // temp at calibration time
 
 Preferences pref;
@@ -127,7 +127,7 @@ void loop() {
     updateEXTHum(h1);
     updateScale();
 
-    float weightCorrected = grams + (t1 - T_BASELINE) * 187.5;
+    float weightCorrected = grams + (t1 - T_BASELINE) * TEMP_SENSITIVITY;
     updateweightcard(grams);
 
     measureBattery();
@@ -163,11 +163,11 @@ void loop() {
 
         mqttClient.publish((topicBase + "/temperature1").c_str(), String(temp1).c_str()); delay(100);
         mqttClient.publish((topicBase + "/humidity1").c_str(), String(h1).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/temperature2").c_str(), String(t2).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/humidity2").c_str(), String(h2).c_str()); delay(100);
+        if(t2>0){mqttClient.publish((topicBase + "/temperature2").c_str(), String(t2).c_str()); delay(100);}
+        if(h2>0){mqttClient.publish((topicBase + "/humidity2").c_str(), String(h2).c_str()); delay(100);}
         mqttClient.publish((topicBase + "/weight").c_str(), String(grams).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/tempadjustedweight").c_str(), String(weightCorrected).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/battery").c_str(), String(voltageDividerReading).c_str()); delay(100);
+        mqttClient.publish((topicBase + "/backend/tempadjustedweight").c_str(), String(weightCorrected).c_str()); delay(100);
+        mqttClient.publish((topicBase + "/backend/battery").c_str(), String(voltageDividerReading).c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/version").c_str(), String(currentVersion).c_str()); delay(100);
         mqttClient.publish((topicBase + "/lbs").c_str(), String(weightInPounds).c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/IP").c_str(), WiFi.localIP().toString().c_str()); delay(100);
@@ -192,6 +192,8 @@ void loop() {
         Serial.println("//////////////////////////////////////////");
     }
     updateOLEDWithNetworkStatus();
+
+
     WebSerial.println(String("Disable Sleep: ") + disablesleep);
     Serial.println(String("Disable Sleep: ") + disablesleep);
 
@@ -244,6 +246,9 @@ void loop() {
         // Do nothing
     }
     printPreferences();
+    printToOLED("Light Sleep Starting");
+    delay(1000);
+    printToOLED("...");
     enterLightSleep(30);
 }
 
