@@ -7,6 +7,7 @@
 #include "ota.h"
 #include <ESPDashPro.h>
 #include <NetWizard.h>
+#include "NAU7204.h"
 
 AsyncWebServer server(80);  // Define WebServer instance
 
@@ -138,8 +139,11 @@ void recvMsg(uint8_t *data, size_t len) {
       delay(1000);
      // ESP.restart();
      
-    } else if(msg == "off") {
-   //   turnOffWiFi();
+    } else if(msg == "nauCal"){
+
+      nauCalRequested = true;
+    
+
     } else if(msg == "pref") {
    //   loadPreferences();
     } else if(msg == "read") {

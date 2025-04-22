@@ -106,4 +106,15 @@
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/DNSServer/src/DNSServer.h \
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/AsyncUDP/src/AsyncUDP.h \
  .pio/libdeps/esp32dev/NetWizard/src/NetWizardParameter.h \
- .pio/libdeps/esp32dev/NetWizard/src/NetWizard.h
+ .pio/libdeps/esp32dev/NetWizard/src/NetWizard.h src/OLED.h \
+ .pio/libdeps/esp32dev/Adafruit\ SSD1306/Adafruit_SSD1306.h \
+ .pio/libdeps/esp32dev/Adafruit\ GFX\ Library/Adafruit_GFX.h \
+ .pio/libdeps/esp32dev/Adafruit\ GFX\ Library/gfxfont.h \
+ .pio/libdeps/esp32dev/Adafruit\ BusIO/Adafruit_I2CDevice.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-log.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/HardwareI2C.h \
+ .pio/libdeps/esp32dev/Adafruit\ BusIO/Adafruit_SPIDevice.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src/SPI.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-spi.h

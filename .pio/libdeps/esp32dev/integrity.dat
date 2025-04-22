@@ -1,12 +1,14 @@
-adafruit/Adafruit SSD1306@^2.5.13
-lexus2k/ssd1306@^1.8.5
-olkal/HX711_ADC@1.2.12
-adafruit/SdFat - Adafruit Fork@^2.2.54
-adafruit/Adafruit Unified Sensor@1.1.15
-bblanchon/ArduinoJson@7.3.0
+adafruit/Adafruit NAU7802 Library@^1.0.5
+ayushsharma82/NetWizard@^1.0.0
 ESP32Async/AsyncTCP@3.3.5
 adafruit/DHT sensor library@1.4.6
-ESP32Async/ESPAsyncWebServer@3.7.1
-ayushsharma82/NetWizard@^1.0.0
+sparkfun/SparkFun Qwiic Scale NAU7802 Arduino Library@^1.0.6
+bblanchon/ArduinoJson@7.3.0
+lexus2k/ssd1306@^1.8.5
+olkal/HX711_ADC@1.2.12
+adafruit/Adafruit Unified Sensor@1.1.15
 ayushsharma82/WebSerial@^2.0.8
+adafruit/SdFat - Adafruit Fork@^2.2.54
+adafruit/Adafruit SSD1306@^2.5.13
+ESP32Async/ESPAsyncWebServer@3.7.1
 knolleary/PubSubClient@2.8

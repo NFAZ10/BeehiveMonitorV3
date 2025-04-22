@@ -30,6 +30,8 @@ extern bool weightset;
 extern bool disablesleep;
 extern bool newSetup;
 extern int reversedloadcell;
+extern bool nauCalRequested;
+
 extern String Name;
 
 extern float h1, t1;

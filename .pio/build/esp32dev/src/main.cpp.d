@@ -113,4 +113,6 @@
  .pio/libdeps/esp32dev/Adafruit\ BusIO/Adafruit_I2CDevice.h \
  .pio/libdeps/esp32dev/Adafruit\ BusIO/Adafruit_SPIDevice.h \
  C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/SPI/src/SPI.h \
- C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-spi.h
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-spi.h \
+ src/LoRaTransmitterSerial.h src/NAU7204.h \
+ .pio/libdeps/esp32dev/SparkFun\ Qwiic\ Scale\ NAU7802\ Arduino\ Library/src/SparkFun_Qwiic_Scale_NAU7802_Arduino_Library.h

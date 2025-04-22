@@ -14,6 +14,8 @@
 #include "mqtt.h"
 #include <Preferences.h>
 #include "OLED.h"
+#include "LoRaTransmitterSerial.h"
+#include "NAU7204.h"
 
 #define DEBUG 0
 #if DEBUG
@@ -27,6 +29,7 @@
 float battery = 0.0;
 float grams = 0.0;
 float temp1 = NAN;
+bool nauAvailable = false; // Declare and initialize nauAvailable
 float temp2 = NAN;
 float weight = 0.0;
 int counter = 0;
@@ -65,7 +68,7 @@ void setup() {
     wifiSetup();
     printToOLED("DASHSETUP");
     webserial();
-
+    setupLoRaTransmitter();
     String ipAddress = WiFi.localIP().toString();
     printToOLED("IP: " + ipAddress);
     delay(1000);
@@ -89,12 +92,27 @@ void setup() {
 
     checkForUpdates();
     loadPreferences();
-    initDHTSensors();
-    initScale();
+    nauSetup();      // Try to initialize NAU7802
+    nauAvailable = true; // Set nauAvailable to true if initialization succeeds
+    nauSetup();      // Try to initialize NAU7802
+        
+    // Optional: Print source
+    if (nauAvailable) {
+      Serial.println("Using NAU7802");
+    } else {
+      Serial.println("Using HX711");
+      initScale();
+    }
+    
+  
+
+
     if (reversedloadcell == 1) {
         WebSerial.println("******Reversed Load Cell*******");
         reverseloadcell();
     } 
+
+
     WebSerial.println("Checking Battery Level");
     Serial.println("Checking Battery Level");
     if (disablesleep == false) {
@@ -119,13 +137,28 @@ void loop() {
         tareRequested = false; // Clear the flag
         tareDisplay(); // Call the tare function
         Serial.println("Tare Button Pressed");
-        tareScale(); // Call the tare function
+        if (nauAvailable) {
+            nauTare(10); // Tare NAU7802
+        } else {
+            tareScale(); // Tare HX711
+        }
+    }
+    if(nauCalRequested) {
+        nauCalibrate(1000, 10); // Calibrate NAU7802
+        nauCalRequested = false; // Clear the flag
     }
 
     readDHTSensors();
     updateEXTTemp(temp1);
     updateEXTHum(h1);
-    updateScale();
+
+    if (nauAvailable) {
+        grams = nauRead(100); // Get the weight from NAU7802
+    } else {
+        updateScale();
+    }
+    
+    
 
     float weightCorrected = grams + (t1 - T_BASELINE) * TEMP_SENSITIVITY;
     updateweightcard(grams);
@@ -166,7 +199,7 @@ void loop() {
         if(t2>0){mqttClient.publish((topicBase + "/temperature2").c_str(), String(t2).c_str()); delay(100);}
         if(h2>0){mqttClient.publish((topicBase + "/humidity2").c_str(), String(h2).c_str()); delay(100);}
         mqttClient.publish((topicBase + "/weight").c_str(), String(grams).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/backend/tempadjustedweight").c_str(), String(weightCorrected).c_str()); delay(100);
+        mqttClient.publish((topicBase + "/tempadjustedweight").c_str(), String(weightCorrected).c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/battery").c_str(), String(voltageDividerReading).c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/version").c_str(), String(currentVersion).c_str()); delay(100);
         mqttClient.publish((topicBase + "/lbs").c_str(), String(weightInPounds).c_str()); delay(100);
@@ -249,6 +282,6 @@ void loop() {
     printToOLED("Light Sleep Starting");
     delay(1000);
     printToOLED("...");
-    enterLightSleep(30);
+    //enterLightSleep(30);
 }
 

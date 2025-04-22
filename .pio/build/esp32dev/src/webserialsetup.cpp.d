@@ -102,4 +102,9 @@
  .pio/libdeps/esp32dev/NetWizard/src/NetWizard.h src/sensors.h \
  .pio/libdeps/esp32dev/HX711_ADC/src/HX711_ADC.h \
  .pio/libdeps/esp32dev/HX711_ADC/src/config.h src/variables.h \
- src/basicfunctions.h src/ota.h
+ src/basicfunctions.h src/ota.h src/NAU7204.h \
+ .pio/libdeps/esp32dev/SparkFun\ Qwiic\ Scale\ NAU7802\ Arduino\ Library/src/SparkFun_Qwiic_Scale_NAU7802_Arduino_Library.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src/Wire.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-log.h \
+ C:/Users/nickf/.platformio/packages/framework-arduinoespressif32/cores/esp32/HardwareI2C.h

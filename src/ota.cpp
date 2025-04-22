@@ -3,11 +3,13 @@
 #include <HTTPClient.h>
 #include <Update.h>
 #include "webserialsetup.h"
+#include "OLED.h"
 
 extern bool forceUpdate;
 
 // Function to perform OTA
 void performOTA() {
+  printToOLED("OTA Update Downloading...");
     if(otaBranch == "dev") {
     versionURL = DEVversionURL;
     firmwareURL = DEVfirmwareURL;
