@@ -2,6 +2,8 @@
 #include <Preferences.h>
 #include "NAU7204.h"
 #include "webserialsetup.h"
+#include "OLED.h"
+#include "variables.h"
 
 NAU7802 myScale;
 extern Preferences prefs;
@@ -36,7 +38,7 @@ bool nauSetup() {
   Serial.println(myScale.getZeroOffset());
   Serial.print("Calibration factor: ");
   Serial.println(myScale.getCalibrationFactor());
-
+  nauAvailable = true; // Set nauAvailable to true if NAU7802 is detected
   scaleReady = true;
   return true;
 }
@@ -52,8 +54,9 @@ void nauCalibrate(float knownWeight, uint16_t samples) {
   WebSerial.println("Taring before calibration...");
   myScale.calculateZeroOffset(samples);
   WebSerial.println("Put Weight on scale.");
-  delay(5000); // Wait for user to place weight
-  WebSerial.println("Reading weight...");
+  delay(15000); // Wait for user to place weight
+  Serial.print("Raw value read from NAU7802: ");
+  WebSerial.println("Reading weight...Now");
   delay(1000); // Wait for reading to stabilize
   WebSerial.println("Calibrating...");
   myScale.calculateCalibrationFactor(knownWeight, samples);
@@ -77,6 +80,8 @@ float nauRead(uint8_t sampleCount) {
         
           Serial.print("Reading: ");
           Serial.println(reading);
+          
+         
         
         total += reading;
         valid++;

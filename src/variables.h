@@ -31,6 +31,7 @@ extern bool disablesleep;
 extern bool newSetup;
 extern int reversedloadcell;
 extern bool nauCalRequested;
+extern bool nauAvailable;
 
 extern String Name;
 

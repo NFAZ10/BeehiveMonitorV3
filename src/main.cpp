@@ -29,7 +29,6 @@
 float battery = 0.0;
 float grams = 0.0;
 float temp1 = NAN;
-bool nauAvailable = false; // Declare and initialize nauAvailable
 float temp2 = NAN;
 float weight = 0.0;
 int counter = 0;
@@ -93,9 +92,7 @@ void setup() {
     checkForUpdates();
     loadPreferences();
     nauSetup();      // Try to initialize NAU7802
-    nauAvailable = true; // Set nauAvailable to true if initialization succeeds
-    nauSetup();      // Try to initialize NAU7802
-        
+    
     // Optional: Print source
     if (nauAvailable) {
       Serial.println("Using NAU7802");
@@ -144,7 +141,7 @@ void loop() {
         }
     }
     if(nauCalRequested) {
-        nauCalibrate(1000, 10); // Calibrate NAU7802
+        nauCalibrate(1000, 100); // Calibrate NAU7802
         nauCalRequested = false; // Clear the flag
     }
 
