@@ -156,8 +156,10 @@ void loop() {
     updateEXTHum(h1);
 
     if (nauAvailable) {
+        WebSerial.println("Reading NAU7802...");
         grams = nauRead(10); // Get the weight from NAU7802
     } else if(!nauAvailable) {
+        WebSerial.println("Reading HX711...");
         updateScale();
     }
     
@@ -208,6 +210,7 @@ void loop() {
         mqttClient.publish((topicBase + "/lbs").c_str(), String(weightInPounds).c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/IP").c_str(), WiFi.localIP().toString().c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/charging").c_str(), String(charging).c_str()); delay(100);
+        mqttClient.publish((topicBase + "/backend/NAU7802").c_str(), String(nauAvailable).c_str()); delay(100);
         
 
         lastPublishTime = millis(); // Update the last publish time
@@ -226,6 +229,21 @@ void loop() {
         Serial.println("Battery: " + String(voltageDividerReading));
         Serial.println("Charging: " + String(charging));
         Serial.println("//////////////////////////////////////////");
+        WebSerial.println("///////////////////LOOP///////////////////");
+        WebSerial.println(topicBase);
+        WebSerial.println("Published data to MQTT:");
+        WebSerial.println("temperature1: " + String(temp1));
+        WebSerial.println("Humidity1: " + String(h1));
+        WebSerial.println("Temperature2: " + String(t2));
+        WebSerial.println("Humidity2: " + String(h2));
+        WebSerial.println("Weight: " + String(grams));
+        WebSerial.println("mva: " + String(mVA));
+        WebSerial.println("lbs: " + String(weightInPounds));
+        WebSerial.println("///////////////UTIL//////////////////////");
+        WebSerial.println("version: " + String(currentVersion));
+        WebSerial.println("Battery: " + String(voltageDividerReading));
+        WebSerial.println("Charging: " + String(charging));
+        WebSerial.println("//////////////////////////////////////////");
     }
     updateOLEDWithNetworkStatus();
 
@@ -248,10 +266,10 @@ void loop() {
     timesincelastrestart++;
     Serial.println("Time Since Last Restart: " + String(timesincelastrestart));
     WebSerial.println("Time Since Last Restart: " + String(timesincelastrestart));
-    if (timesincelastrestart > 5 && disablesleep == false) {
+    if (timesincelastrestart > 5 && disablesleep == false && nauAvailable == false) {
         timesincelastrestart = 0;
         ESP.restart();
-    }else if (timesincelastrestart > 20 && disablesleep == true) {
+    }else if (timesincelastrestart > 20 && disablesleep == true && nauAvailable == false) {
         timesincelastrestart = 0;
         ESP.restart();
     }
