@@ -183,6 +183,10 @@ void loop() {
     }
     updateOLED();
 
+    pref.begin("beehive",false);
+  
+    float testvalue2 = pref.getFloat("calFactor", 0.0);
+    
     if (WiFi.status() == WL_CONNECTED) {
         if (!mqttClient.connected()) {
             checkForUpdates();
@@ -214,6 +218,7 @@ void loop() {
         mqttClient.publish((topicBase + "/backend/IP").c_str(), WiFi.localIP().toString().c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/charging").c_str(), String(charging).c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/NAU7802").c_str(), String(nauAvailable).c_str()); delay(100);
+        mqttClient.publish((topicBase + "/backend/CalValue").c_str(), String(testvalue2).c_str()); delay(100);
         
 
         lastPublishTime = millis(); // Update the last publish time

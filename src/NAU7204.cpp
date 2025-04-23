@@ -47,9 +47,13 @@ bool nauSetup() {
   float prefscalvalue = prefs.getFloat("calFactor", 0.0);
   Serial.print("Pref calibration factor: ");
   Serial.println(prefscalvalue);
+  
+  int storedoffset = prefs.getInt("zeroOffset", myScale.getZeroOffset());
   prefs.end();
 
-
+  myScale.setZeroOffset(storedoffset);
+  WebSerial.print("Stored zero offset: ");
+  WebSerial.println(storedoffset);
 
   myScale.setGain(NAU7802_GAIN_64);// //Gain can be set to 1, 2, 4, 8, 16, 32, 64, or 128..
   myScale.setSampleRate(NAU7802_SPS_320); //Increase to max sample rate

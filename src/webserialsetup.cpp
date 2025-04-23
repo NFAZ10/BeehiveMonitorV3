@@ -152,6 +152,31 @@ void recvMsg(uint8_t *data, size_t len) {
       delay(1000);
      // ESP.restart();
     }
+  }  
+  
+  
+  else if (msg.startsWith("OFFSET[")) {
+    int startIndex = msg.indexOf('[') + 1;
+    int endIndex = msg.indexOf(']');
+    if (startIndex > 0 && endIndex > startIndex) {
+      String zeroOffsetstr = msg.substring(startIndex, endIndex);
+     int zeroOffset = zeroOffsetstr.toInt();
+      WebSerial.println("Offset Value: " + String(zeroOffset));
+      myScale.setZeroOffset(zeroOffset);
+
+      prefs.begin("beehive",false);
+      prefs.putInt("zeroOffset", zeroOffset);
+      float testvalueoff = prefs.getInt("zeroOffset", 0);
+      WebSerial.println("Test Value: " + String(testvalueoff));
+
+      prefs.end();
+      delay(1000);
+      WebSerial.println("Offset Set");
+      WebSerial.println(testvalueoff);
+      WebSerial.println("Rebooting...");
+      delay(1000);
+     // ESP.restart();
+    }
   }
 
   else if (msg == "clear") {
