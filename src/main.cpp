@@ -126,7 +126,7 @@ void setup() {
 }
 
 void loop() {
-    WebSerial.println("/******************************************************/");
+    WebSerial.println("/*************************************/");
     NWLoop();
     WebSerial.loop();
 
@@ -135,11 +135,17 @@ void loop() {
         tareDisplay(); // Call the tare function
         Serial.println("Tare Button Pressed");
         if (nauAvailable) {
+            Serial.println("Taring NAU7802...");
+            WebSerial.println("Taring NAU7802...");
             nauTare(10); // Tare NAU7802
-        } else {
+        } else if(!nauAvailable) {
+            Serial.println("Taring HX711...");
+            WebSerial.println("Taring HX711...");
             tareScale(); // Tare HX711
         }
     }
+
+
     if(nauCalRequested) {
         nauCalibrate(1000, 100); // Calibrate NAU7802
         nauCalRequested = false; // Clear the flag
@@ -150,8 +156,8 @@ void loop() {
     updateEXTHum(h1);
 
     if (nauAvailable) {
-        grams = nauRead(100); // Get the weight from NAU7802
-    } else {
+        grams = nauRead(10); // Get the weight from NAU7802
+    } else if(!nauAvailable) {
         updateScale();
     }
     

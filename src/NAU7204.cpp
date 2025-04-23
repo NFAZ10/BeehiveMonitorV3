@@ -32,7 +32,7 @@ bool nauSetup() {
   readScaleSettings();
 
   myScale.setSampleRate(NAU7802_SPS_320);
-  myScale.calibrateAFE();
+  
 
   Serial.print("Zero offset: ");
   Serial.println(myScale.getZeroOffset());
@@ -68,7 +68,8 @@ void nauCalibrate(float knownWeight, uint16_t samples) {
 }
 
 float nauRead(uint8_t sampleCount) {
-  if (!scaleReady) return -999;
+  Serial.println("Reading NAU7802...");
+  WebSerial.println("Reading NAU7802...");
 
   float total = 0;
   int valid = 0;
@@ -78,11 +79,8 @@ float nauRead(uint8_t sampleCount) {
       float reading = myScale.getWeight();
       if (reading < 10000 && reading > -10000) {
         
-          Serial.print("Reading: ");
-          Serial.println(reading);
           
-         
-        
+       
         total += reading;
         valid++;
       }
@@ -90,19 +88,21 @@ float nauRead(uint8_t sampleCount) {
     delay(10);
   }
 
-  if (valid == 0) return -999;
+ 
 
   float weight = total / valid;
 
-  avgWeights[avgWeightSpot++] = weight;
-  if (avgWeightSpot >= AVG_SIZE) avgWeightSpot = 0;
 
-  float avgWeight = 0;
-  for (int i = 0; i < AVG_SIZE; i++) {
-    avgWeight += avgWeights[i];
-  }
 
-  return avgWeight / AVG_SIZE;
+  WebSerial.println(String("Grams: ") + weight);
+  // Convert grams to pounds (1 gram = 0.00220462 pounds)
+  weightInPounds = weight * 0.00220462;
+  WebSerial.println(String("Weight in Pounds: ") + weightInPounds);
+  prefs.begin("beehive", false);
+  prefs.putInt("Weight", weight);
+  prefs.end();
+
+  return weight;
 }
 
 void recordScaleSettings() {
@@ -113,21 +113,19 @@ void recordScaleSettings() {
 }
 
 void readScaleSettings() {
-  prefs.begin(PREF_NAMESPACE, true);
+  prefs.begin(PREF_NAMESPACE, false);
 
-  if (prefs.isKey(PREF_KEY_SCALE)) {
+
     float scale = prefs.getFloat(PREF_KEY_SCALE);
     myScale.setCalibrationFactor(scale);
-  } else {
-    myScale.setCalibrationFactor(1.0);
-  }
+    Serial.print("Scale factor: ");
+    Serial.println(scale);
 
-  if (prefs.isKey(PREF_KEY_ZERO)) {
     int32_t zero = prefs.getInt(PREF_KEY_ZERO);
     myScale.setZeroOffset(zero);
-  } else {
-    myScale.setZeroOffset(0);
-  }
+    Serial.print("Zero offset: ");
+    Serial.println(zero);
+
 
   prefs.end();
 }

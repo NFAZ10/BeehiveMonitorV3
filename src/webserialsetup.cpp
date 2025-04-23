@@ -77,13 +77,19 @@ void recvMsg(uint8_t *data, size_t len) {
     if (msg == "tare") {
       tareRequested = true;
       WebSerial.println("Tare requested");
-    } else if (msg == "lowpower") {
+    }
+    
+    else if (msg == "lowpower") {
       lowPowerMode = !lowPowerMode;
       WebSerial.println("Low Power Mode Toggled");
-    } else if (msg == "reboot") {
+    } 
+    
+    else if (msg == "reboot") {
       WebSerial.println("Rebooting...");
       ESP.restart();
-    } else if (msg.startsWith("SET[")) {
+    } 
+    
+    else if (msg.startsWith("SET[")) {
       int startIndex = msg.indexOf('[') + 1;
       int endIndex = msg.indexOf(']');
       if (startIndex > 0 && endIndex > startIndex) {
@@ -91,7 +97,9 @@ void recvMsg(uint8_t *data, size_t len) {
       last_weightstore = weightStr.toInt();
       }
       WebSerial.println("Weight Set");
-    }  else if(msg.startsWith("CALSET[")){
+    }  
+    
+    else if(msg.startsWith("CALSET[")){
       int startIndex = msg.indexOf('[') + 1;
       int endIndex = msg.indexOf(']');
       if (startIndex > 0 && endIndex > startIndex) {
