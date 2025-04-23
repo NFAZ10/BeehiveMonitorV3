@@ -118,6 +118,7 @@ float nauRead(uint8_t sampleCount) {
 
 
   WebSerial.println(String("Grams: ") + weight);
+  WebSerial.println(String("RAW: ") + weightraw);
   // Convert grams to pounds (1 gram = 0.00220462 pounds)
   weightInPounds = weight * 0.00220462;
   WebSerial.println(String("Weight in Pounds: ") + weightInPounds);
