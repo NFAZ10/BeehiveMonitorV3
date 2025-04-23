@@ -3,6 +3,8 @@
 
 #include <SparkFun_Qwiic_Scale_NAU7802_Arduino_Library.h>
 
+extern NAU7802 myScale;
+
 bool nauSetup();
 void nauTare(uint16_t samples = 64);
 void nauCalibrate(float knownWeight, uint16_t samples = 64);

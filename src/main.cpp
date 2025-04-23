@@ -96,7 +96,10 @@ void setup() {
     // Optional: Print source
     if (nauAvailable) {
       Serial.println("Using NAU7802");
-    } else {
+    } else if(!nauAvailable){
+         myScale.powerUp(); 
+         delay(1000);
+    } else{
       Serial.println("Using HX711");
       initScale();
     }
@@ -282,10 +285,12 @@ void loop() {
         } else if (battery < 4.15 && battery > 3.9) {
             WebSerial.println("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
             Serial.println("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
+            myScale.powerDown();
             delay(1000);
             enterLightSleep(1800); // 30 minutes
         } else if (battery < 3.9 && battery > 3.7) {
             clearOLED();
+            myScale.powerDown();
             WebSerial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
             Serial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
             enterLightSleep(3600); // 1 hour
@@ -293,6 +298,7 @@ void loop() {
             clearOLED();
             WebSerial.println("Deep Sleep for 3 Hours.");
             Serial.println("Battery is below 3.5V. Entering Deep Sleep for 2 Hour.");
+            myScale.powerDown();
             delay(1000);
             enterLightSleep(10800); // 3 hours
         }
