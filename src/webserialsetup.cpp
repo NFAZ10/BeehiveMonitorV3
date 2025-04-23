@@ -139,8 +139,11 @@ void recvMsg(uint8_t *data, size_t len) {
       WebSerial.println("Calibration Value: " + String(calibrationValue));
       myScale.setCalibrationFactor(calibrationValue);
 
-      prefs.begin("beehive-data",false);
+      prefs.begin("beehive",false);
       prefs.putFloat("calFactor", calibrationValue);
+      float testvalue = prefs.getFloat("calFactor", 0.0);
+      WebSerial.println("Test Value: " + String(testvalue));
+
       prefs.end();
       delay(1000);
       WebSerial.println("Calibration Set");
