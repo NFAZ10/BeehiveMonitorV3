@@ -39,8 +39,10 @@ bool nauSetup() {
   Serial.println("NAU7802 detected.");
 
   readScaleSettings();
+  prefs.begin(PREF_NAMESPACE, false);
   float oldcalvalue = myScale.getCalibrationFactor();
   float prefscalvalue = prefs.getFloat("calibrationFactor", 0.0);
+  prefs.end();
 
   if (oldcalvalue != prefscalvalue) {
     myScale.setCalibrationFactor(prefscalvalue);
