@@ -39,6 +39,16 @@ bool nauSetup() {
   Serial.println("NAU7802 detected.");
 
   readScaleSettings();
+  float oldcalvalue = myScale.getCalibrationFactor();
+  float prefscalvalue = prefs.getFloat("calibrationFactor", 0.0);
+
+  if (oldcalvalue != prefscalvalue) {
+    myScale.setCalibrationFactor(prefscalvalue);
+    Serial.println("Calibration factor set from preferences.");
+  } else {
+    Serial.println("Calibration factor set from NAU7802.");
+  }
+
   myScale.setGain(NAU7802_GAIN_64);// //Gain can be set to 1, 2, 4, 8, 16, 32, 64, or 128..
   myScale.setSampleRate(NAU7802_SPS_320); //Increase to max sample rate
   myScale.setLDO(NAU7802_LDO_3V0);
@@ -81,6 +91,8 @@ void nauCalibrate(float knownWeight, uint16_t samples) {
 float nauRead(uint8_t sampleCount) {
   Serial.println("Reading NAU7802...");
   WebSerial.println("Reading NAU7802...");
+  WebSerial.print("Calibration factor: ");
+  WebSerial.println(myScale.getCalibrationFactor());
 
   float total = 0;
   float totalraw = 0;
