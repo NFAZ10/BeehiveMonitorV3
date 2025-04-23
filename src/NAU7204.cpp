@@ -18,6 +18,15 @@ bool scaleReady = false;
 float avgWeights[AVG_SIZE];
 uint8_t avgWeightSpot = 0;
 
+
+//myScale.powerDown(); //Power down to ~200nA
+//delay(1000);
+//myScale.powerUp(); //Power up scale. This scale takes ~600ms to boot and take reading.
+//myScale.setGain(NAU7802_GAIN_2); //Gain can be set to 1, 2, 4, 8, 16, 32, 64, or 128.
+//myScale.setSampleRate(NAU7802_SPS_40); //Sample rate can be set to 10, 20, 40, 80, or 320Hz
+//myScale.setLDOVoltage(NAU7802_LDO_3V); //LDO voltage can be set to 2.7, 3.0, or 3.3V
+
+
 bool nauSetup() {
   Wire.begin();
   Wire.setClock(400000);
@@ -30,8 +39,10 @@ bool nauSetup() {
   Serial.println("NAU7802 detected.");
 
   readScaleSettings();
-
-  myScale.setSampleRate(NAU7802_SPS_320);
+  myScale.setGain(NAU7802_GAIN_64);// //Gain can be set to 1, 2, 4, 8, 16, 32, 64, or 128..
+  myScale.setSampleRate(NAU7802_SPS_320); //Increase to max sample rate
+  myScale.setLDO(NAU7802_LDO_3V0);
+  //myScale.setChannel(NAU7802_CHANNEL_1); //Select between channel values
   
 
   Serial.print("Zero offset: ");
@@ -72,6 +83,7 @@ float nauRead(uint8_t sampleCount) {
   WebSerial.println("Reading NAU7802...");
 
   float total = 0;
+  float totalraw = 0;
   int valid = 0;
 
   for (int i = 0; i < sampleCount; i++) {
@@ -87,9 +99,20 @@ float nauRead(uint8_t sampleCount) {
     }
     delay(10);
   }
+  for (int i = 0; i < sampleCount; i++) {
+    
+      float readingraw = myScale.getReading();
+      
+        
+        totalraw += readingraw;
+        
+      
+    
+    delay(10);
+  }
 
  
-
+  float weightraw = totalraw/sampleCount;
   float weight = total / valid;
 
 
