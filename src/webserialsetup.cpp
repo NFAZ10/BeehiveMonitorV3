@@ -65,127 +65,170 @@ void NWLoop(){
   NW.loop();
 }
 
+bool awaitingCalibrationInput = false;
+
 
 void recvMsg(uint8_t *data, size_t len) {
-    WebSerial.println("Received Data...");
-  
-    String msg = "";  // Initialize an empty string
-    for (size_t i = 0; i < len; i++) {
-      msg += (char)data[i];  // Append each character to the string
-    }
-  
-    if (msg == "tare") {
-      tareRequested = true;
-      WebSerial.println("Tare requested");
-    }
-    
-    else if (msg == "lowpower") {
-      lowPowerMode = !lowPowerMode;
-      WebSerial.println("Low Power Mode Toggled");
-    } 
-    
-    else if (msg == "reboot") {
+  WebSerial.println("Received Data...");
+
+  String msg = "";  // Initialize an empty string
+  for (size_t i = 0; i < len; i++) {
+    msg += (char)data[i];
+  }
+
+  msg.trim();  // Remove whitespace and \r\n
+  WebSerial.println("Received Data: " + msg);  // Print the received message
+
+  if (awaitingCalibrationInput) {
+    float cal = msg.toFloat();
+    if (cal != 0.0 || msg == "0" || msg == "0.0") {
+      calibrationValue = cal;
+      prefs.begin("beehive-data", false);
+      prefs.putFloat("calFactor", calibrationValue);
+      prefs.end();
+      WebSerial.println("Calibration Value Set: " + String(calibrationValue));
+      awaitingCalibrationInput = false;
+      delay(1000);
       WebSerial.println("Rebooting...");
+      delay(1000);
       ESP.restart();
-    } 
-    
-    else if (msg.startsWith("SET[")) {
-      int startIndex = msg.indexOf('[') + 1;
-      int endIndex = msg.indexOf(']');
-      if (startIndex > 0 && endIndex > startIndex) {
+    } else {
+      WebSerial.println("Invalid calibration input. Try again:");
+    }
+    return;
+  }
+
+  // === Existing commands ===
+  if (msg == "tare") {
+    tareRequested = true;
+    WebSerial.println("Tare requested");
+  }
+
+  else if (msg == "CAL") {
+    WebSerial.println("Enter calibration value:");
+    //waitForCalibrationInput();  // Custom blocking function
+  }
+  
+
+  else if (msg == "lowpower") {
+    lowPowerMode = !lowPowerMode;
+    WebSerial.println("Low Power Mode Toggled");
+  }
+
+  else if (msg == "reboot") {
+    WebSerial.println("Rebooting...");
+    ESP.restart();
+  }
+
+  else if (msg.startsWith("SET[")) {
+    int startIndex = msg.indexOf('[') + 1;
+    int endIndex = msg.indexOf(']');
+    if (startIndex > 0 && endIndex > startIndex) {
       String weightStr = msg.substring(startIndex, endIndex);
       last_weightstore = weightStr.toInt();
-      }
-      WebSerial.println("Weight Set");
-    }  
-    
-    else if(msg.startsWith("CALSET[")){
-      int startIndex = msg.indexOf('[') + 1;
-      int endIndex = msg.indexOf(']');
-      if (startIndex > 0 && endIndex > startIndex) {
+    }
+    WebSerial.println("Weight Set");
+  }
+
+  else if (msg.startsWith("CALSET[")) {
+    int startIndex = msg.indexOf('[') + 1;
+    int endIndex = msg.indexOf(']');
+    if (startIndex > 0 && endIndex > startIndex) {
       String calibrationStr = msg.substring(startIndex, endIndex);
       calibrationValue = calibrationStr.toFloat();
-      prefs.begin("beehive-data");
-      prefs.putFloat("calibrationFactor", calibrationValue);
+      WebSerial.println("Calibration Value: " + String(calibrationValue));
+      myScale.setCalibrationFactor(calibrationValue);
+
+      prefs.begin("beehive-data",false);
+      prefs.putFloat("calFactor", calibrationValue);
       prefs.end();
-      ESP.restart();
-      }
-      WebSerial.println("Cal Set");
-    } else if(msg == "clear") {
-     clearPreferences();
-      WebSerial.println("Preferences Cleared");
-    } else if(msg == "debug") {
-      debug = !debug;
-      WebSerial.println("Debug Set");
-    } else if(msg == "sleep") {
-     disablesleep = false;
-     WebSerial.println("Sleep Enabled");
-     delay(1000);
-      ESP.restart();
-    } else if(msg == "wake") {
-     disablesleep = true;
-     WebSerial.println("Sleep Disabled");
-    } else if(msg == "otaforce") {
-        performOTA();
-     // connectToWiFi();
-    } else if(msg == "REVERSE") {
-      WebSerial.println("Reversing Load Cell");
-     
-      reversedloadcell = 1;
-      WebSerial.println(reversedloadcell);
-      prefs.begin("beehive", false);
-      prefs.putInt("reversed",1);
-      prefs.end();
-      WebSerial.println("Reversed Load Cell");
+      delay(1000);
+      WebSerial.println("Calibration Set");
+      WebSerial.println(calibrationValue);
       WebSerial.println("Rebooting...");
-
-      if (reversedloadcell == 1) {
-        WebSerial.println("******Reversed Load Cell*******");
-        reverseloadcell();
-      }
-
       delay(1000);
      // ESP.restart();
-     
-    } else if(msg == "nauCal"){
-
-      nauCalRequested = true;
-    
-
-    } else if(msg == "pref") {
-   //   loadPreferences();
-    } else if(msg == "read") {
-    //  readDHTSensors();
-    } else if(msg == "activate") {
-      WebSerial.println("Activating install from Factory Defaults");
-      newSetup = false;
-      prefs.begin("beehive", false);
-      prefs.putBool("newSetups",false);
-      prefs.end();
-     
-
-    }else if(msg.startsWith("NAMESET[")){
-      prefs.begin("beehive", false);
-      int startIndex = msg.indexOf('[') + 1;
-      int endIndex = msg.indexOf(']');
-      if (startIndex > 0 && endIndex > startIndex) {
-        String nameStr = msg.substring(startIndex, endIndex);
-        prefs.putString("name", nameStr);
-      }
-      prefs.end();
-      WebSerial.println("Name Set");
-      WebSerial.println(Name);
-      
-      } else
-  
-    {
-      /* code */
     }
-    
-  
-    WebSerial.println(msg);  // Send the reconstructed string to WebSerial
-  
   }
+
+  else if (msg == "clear") {
+    clearPreferences();
+    WebSerial.println("Preferences Cleared");
+  }
+
+  else if (msg == "debug") {
+    debug = !debug;
+  }
+
+  else if (msg == "sleep") {
+    disablesleep = false;
+    WebSerial.println("Sleep Enabled");
+    delay(1000);
+    ESP.restart();
+  }
+
+  else if (msg == "wake") {
+    disablesleep = true;
+    WebSerial.println("Sleep Disabled");
+  }
+
+  else if (msg == "otaforce") {
+    performOTA();
+  }
+
+  else if (msg == "REVERSE") {
+    WebSerial.println("Reversing Load Cell");
+    reversedloadcell = 1;
+    WebSerial.println(reversedloadcell);
+    prefs.begin("beehive", false);
+    prefs.putInt("reversed", 1);
+    prefs.end();
+    WebSerial.println("Reversed Load Cell");
+    WebSerial.println("Rebooting...");
+
+    if (reversedloadcell == 1) {
+      WebSerial.println("******Reversed Load Cell*******");
+      reverseloadcell();
+    }
+    delay(1000);
+  }
+
+  else if (msg == "nauCal") {
+    nauCalRequested = true;
+  }
+
+  else if (msg == "pref") {
+    // loadPreferences();
+  }
+
+  else if (msg == "read") {
+    // readDHTSensors();
+  }
+
+  else if (msg == "activate") {
+    WebSerial.println("Activating install from Factory Defaults");
+    newSetup = false;
+    prefs.begin("beehive", false);
+    prefs.putBool("newSetups", false);
+    prefs.end();
+  }
+
+  else if (msg.startsWith("NAMESET[")) {
+    prefs.begin("beehive", false);
+    int startIndex = msg.indexOf('[') + 1;
+    int endIndex = msg.indexOf(']');
+    if (startIndex > 0 && endIndex > startIndex) {
+      String nameStr = msg.substring(startIndex, endIndex);
+      prefs.putString("name", nameStr);
+    }
+    prefs.end();
+    WebSerial.println("Name Set");
+    WebSerial.println(Name);
+  }
+
+  WebSerial.println(msg);  // Echo message
+}
+
 
 
   void webserial() {

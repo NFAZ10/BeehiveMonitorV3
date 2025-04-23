@@ -24,4 +24,5 @@ void updateEXTHum(float hum);   // Function to update external humidity
 void updateweightcard(float dgrams); // Function to update weight
 void dashLoop();        // Function to loop DashPro
 
+
 #endif // WEBSERIALSETUP_H

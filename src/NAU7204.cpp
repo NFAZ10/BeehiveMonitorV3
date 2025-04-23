@@ -39,21 +39,17 @@ bool nauSetup() {
   Serial.println("NAU7802 detected.");
 
   readScaleSettings();
+
   prefs.begin("beehive", false);
   float oldcalvalue = myScale.getCalibrationFactor();
   Serial.print("Old calibration factor: ");
   Serial.println(oldcalvalue);
-  float prefscalvalue = prefs.getFloat("calibrationFactor", 0.0);
+  float prefscalvalue = prefs.getFloat("calFactor", 0.0);
   Serial.print("Pref calibration factor: ");
   Serial.println(prefscalvalue);
   prefs.end();
 
-  if (oldcalvalue != prefscalvalue) {
-    myScale.setCalibrationFactor(prefscalvalue);
-    Serial.println("Calibration factor set from preferences.");
-  } else {
-    Serial.println("Calibration factor set from NAU7802.");
-  }
+
 
   myScale.setGain(NAU7802_GAIN_64);// //Gain can be set to 1, 2, 4, 8, 16, 32, 64, or 128..
   myScale.setSampleRate(NAU7802_SPS_320); //Increase to max sample rate
@@ -149,16 +145,16 @@ float nauRead(uint8_t sampleCount) {
 
 void recordScaleSettings() {
   prefs.begin(PREF_NAMESPACE, false);
-  prefs.putFloat(PREF_KEY_SCALE, myScale.getCalibrationFactor());
+  prefs.putFloat("calFactor", myScale.getCalibrationFactor());
   prefs.putInt(PREF_KEY_ZERO, myScale.getZeroOffset());
   prefs.end();
 }
 
 void readScaleSettings() {
-  prefs.begin(PREF_NAMESPACE, false);
+  prefs.begin("beehive", false);
 
 
-    float scale = prefs.getFloat(PREF_KEY_SCALE);
+    float scale = prefs.getFloat("calFactor", 0.0); 
     myScale.setCalibrationFactor(scale);
     Serial.print("Scale factor: ");
     Serial.println(scale);
