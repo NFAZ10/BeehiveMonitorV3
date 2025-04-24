@@ -274,10 +274,10 @@ void loop() {
     timesincelastrestart++;
     Serial.println("Time Since Last Restart: " + String(timesincelastrestart));
     WebSerial.println("Time Since Last Restart: " + String(timesincelastrestart));
-    if (timesincelastrestart > 5 && disablesleep == false && nauAvailable == false) {
+    if (timesincelastrestart > 5 && disablesleep == false) {
         timesincelastrestart = 0;
         ESP.restart();
-    }else if (timesincelastrestart > 20 && disablesleep == true && nauAvailable == false) {
+    }else if (timesincelastrestart > 20 && disablesleep == true) {
         timesincelastrestart = 0;
         ESP.restart();
     }
