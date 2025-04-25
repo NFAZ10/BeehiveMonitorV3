@@ -197,7 +197,10 @@ void updateScale() {
         }
         total += LoadCell.getData();
     }
-
+WebSerial.println(String("Total: ") + total);
+    WebSerial.println(String("Sample Count: ") + sampleCount);
+   
+    
     grams = total / sampleCount;
 WebSerial.println(String("RawGrams: ") + grams);
     if (grams >= -20 && grams <= 20) {
