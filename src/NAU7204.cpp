@@ -55,9 +55,10 @@ bool nauSetup() {
   WebSerial.print("Stored zero offset: ");
   WebSerial.println(storedoffset);
 
-  myScale.setGain(NAU7802_GAIN_64);// //Gain can be set to 1, 2, 4, 8, 16, 32, 64, or 128..
-  myScale.setSampleRate(NAU7802_SPS_320); //Increase to max sample rate
-  myScale.setLDO(NAU7802_LDO_3V0);
+  myScale.setGain(NAU7802_GAIN_128);
+  myScale.setSampleRate(NAU7802_SPS_320);
+  myScale.setLDO(NAU7802_LDO_3V3);
+  myScale.calibrateAFE();
   //myScale.setChannel(NAU7802_CHANNEL_1); //Select between channel values
   
 
@@ -133,7 +134,17 @@ float nauRead(uint8_t sampleCount) {
   float weightraw = totalraw/sampleCount;
   float weight = total / valid;
 
+  prefs.begin("beehive", false);
+  int loadcellconfig = prefs.getInt("loadcellconfig", 0);
+  prefs.end();
+  if (loadcellconfig == 1) {
+    weight = weight*2; // One Side load cell configuration
+  }else if (loadcellconfig == 2) {
+    weight = weight; // Two Side load cell configuration
+  }else {
 
+    weight = weight; // Default load cell configuration
+  }
 
   WebSerial.println(String("Grams: ") + weight);
   WebSerial.println(String("RAW: ") + weightraw);
