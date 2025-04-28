@@ -5,6 +5,8 @@
 #include "OLED.h"
 #include "variables.h"
 
+extern Adafruit_SSD1306 display;
+
 NAU7802 myScale;
 extern Preferences prefs;
 
@@ -96,26 +98,37 @@ void nauCalibrate(float knownWeight, uint16_t samples) {
 }
 
 float nauRead(uint8_t sampleCount) {
-  Serial.println("Reading NAU7802...");
+  Serial.println("Reading NAU7802 in Loop...");
   WebSerial.println("Reading NAU7802...");
-  WebSerial.print("Calibration factor: ");
-  WebSerial.println(myScale.getCalibrationFactor());
+
 
   float total = 0;
   float totalraw = 0;
   int valid = 0;
 
   for (int i = 0; i < sampleCount; i++) {
-    if (myScale.available()) {
+    
       float reading = myScale.getWeight();
       if (reading < 10000 && reading > -10000) {
+        Serial.print("Reading Scale:  ");
+        Serial.println(myScale.getReading());
+        display.clearDisplay();
+        display.setTextSize(1); // Set text size to 2 for larger text
+        display.setTextColor(SSD1306_WHITE); // Set text color to white
+        display.setCursor(0, 0); // Set cursor to top-left corner
+        display.print("Reading: ");
+        display.setTextSize(2); // Set text size to 2 for larger text
+        display.setCursor(0, 15); // Set cursor to top-left corner
+        display.print(myScale.getWeight());
+        display.display(); // Display the text
+    
         
           
        
         total += reading;
         valid++;
       }
-    }
+    
     delay(10);
   }
   for (int i = 0; i < sampleCount; i++) {

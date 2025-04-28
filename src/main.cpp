@@ -99,6 +99,11 @@ void setup() {
     } else if(!nauAvailable){
          myScale.powerUp(); 
          delay(1000);
+         if(!nauAvailable){
+            Serial.println("NAU7802 not detected. Using HX711.");
+            WebSerial.println("NAU7802 not detected. Using HX711.");
+            initScale();
+         }
     } else{
       Serial.println("Using HX711");
       initScale();
@@ -160,7 +165,7 @@ void loop() {
 
     if (nauAvailable) {
         WebSerial.println("Reading NAU7802...");
-        grams = nauRead(10); // Get the weight from NAU7802
+        grams = nauRead(100); // Get the weight from NAU7802
     } else if(!nauAvailable) {
         WebSerial.println("Reading HX711...");
         updateScale();
