@@ -221,11 +221,11 @@ void loop() {
         if(h2>0){mqttClient.publish((topicBase + "/humidity2").c_str(), String(h2).c_str()); delay(100);}
         mqttClient.publish((topicBase + "/weight").c_str(), String(grams).c_str()); delay(100);
         mqttClient.publish((topicBase + "/tempadjustedweight").c_str(), String(weightCorrected).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/backend/battery").c_str(), String(voltageDividerReading).c_str()); delay(100);
+        mqttClient.publish((topicBase + "/battery").c_str(), String(voltageDividerReading).c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/version").c_str(), String(currentVersion).c_str()); delay(100);
         mqttClient.publish((topicBase + "/lbs").c_str(), String(weightInPounds).c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/IP").c_str(), WiFi.localIP().toString().c_str()); delay(100);
-        mqttClient.publish((topicBase + "/backend/charging").c_str(), String(charging).c_str()); delay(100);
+        mqttClient.publish((topicBase + "/charging").c_str(), String(charging).c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/NAU7802").c_str(), String(nauAvailable).c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/CalValue").c_str(), String(testvalue2).c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/ZeroOffset").c_str(), String(zero).c_str()); delay(100);
