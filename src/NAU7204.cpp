@@ -98,6 +98,13 @@ void nauCalibrate(float knownWeight, uint16_t samples) {
 }
 
 float nauRead(uint8_t sampleCount) {
+
+  if (last_weightstore > 0) {
+    myScale.setZeroOffset(last_weightstore);
+  } else {
+    myScale.setZeroOffset(0);
+  }
+
   Serial.println("Reading NAU7802 in Loop...");
   WebSerial.println("Reading NAU7802...");
 
