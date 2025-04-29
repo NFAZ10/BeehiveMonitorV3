@@ -8,9 +8,12 @@
 #include <ESPDashPro.h>
 #include <NetWizard.h>
 #include "NAU7204.h"
+#include <Preferences.h>
+
 
 AsyncWebServer server(80);  // Define WebServer instance
 
+extern Preferences prefs;
 ESPDash dashboard(&server,"/",false); 
 NetWizard NW(&server);
 
@@ -21,12 +24,17 @@ Card weightcard(&dashboard, GENERIC_CARD, "Weight", "g");
 
 
 
+Card cellconfig(&dashboard, DROPDOWN_CARD, "Loadcell Config", "Front and Back,Front Only,Back Only");
+
+
 
 Card resetNW(&dashboard, PUSH_BUTTON_CARD, "Reset Wifi Setup");
 Card tarecard(&dashboard, PUSH_BUTTON_CARD, "Tare Scale");
 Card reverseloadcellcard(&dashboard, BUTTON_CARD, "Reverse Load Cell");
 Card linkcard(&dashboard, LINK_CARD, "Serial Monitor");
 
+
+Tab tab2(&dashboard, "Configuration");
 Tab tab1(&dashboard, "Settings");
 
 void setcardtabs(){
@@ -34,6 +42,11 @@ resetNW.setTab(&tab1);
 tarecard.setTab(&tab1);
 reverseloadcellcard.setTab(&tab1);
 linkcard.setTab(&tab1);
+
+cellconfig.setTab(&tab2);
+
+
+
 }
 
 
@@ -49,6 +62,39 @@ void updateweightcard(float dgrams) {
   weightcard.update(dgrams);
 }
 
+void attachcallbacks(){
+
+  cellconfig.attachCallback([&](const char* value){
+    Serial.println("Dropdown Callback Triggered: "+String(value));
+    /* Dropdown card updater - you need to update the button with latest value upon firing of callback */
+    if (strcmp(value, "Front and Back") == 2) {
+      prefs.begin("beehive-data", false);
+      prefs.putInt("loadcellconfig", 2);
+      prefs.end();
+    } else if (strcmp(value, "Front Only") == 0) {
+      prefs.begin("beehive-data", false);
+      prefs.putInt("loadcellconfig", 0);
+      prefs.end();
+    } else if (strcmp(value, "Back Only") == 0) {
+      prefs.begin("beehive-data", false);
+      prefs.putInt("loadcellconfig", 0);
+      prefs.end();
+    } else {
+      prefs.begin("beehive-data", false);
+      prefs.putInt("loadcellconfig", 0);
+      prefs.end();
+      
+    }
+    cellconfig.update(value);
+    /* Send update to dashboard */
+
+    dashboard.sendUpdates();
+
+
+  });
+
+}
+
 // Setup configuration parameters
 
 extern Preferences prefs;
@@ -62,6 +108,7 @@ void wifiSetup(){
 }
 
 void NWLoop(){
+  setcardtabs();
   NW.loop();
 }
 

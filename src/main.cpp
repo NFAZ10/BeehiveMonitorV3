@@ -92,7 +92,7 @@ void setup() {
     checkForUpdates();
     loadPreferences();
     nauSetup();      // Try to initialize NAU7802
-    
+    attachcallbacks();
     // Optional: Print source
     if (nauAvailable) {
       Serial.println("Using NAU7802");
@@ -211,6 +211,10 @@ void loop() {
         String topicBase = "beehive/data/";
         topicBase += macStr; // Get the last 4 digits of the MAC address
 
+
+        int32_t zero = pref.getInt("zeroOffset",0);
+
+
         mqttClient.publish((topicBase + "/temperature1").c_str(), String(temp1).c_str()); delay(100);
         mqttClient.publish((topicBase + "/humidity1").c_str(), String(h1).c_str()); delay(100);
         if(t2>0){mqttClient.publish((topicBase + "/temperature2").c_str(), String(t2).c_str()); delay(100);}
@@ -224,7 +228,8 @@ void loop() {
         mqttClient.publish((topicBase + "/backend/charging").c_str(), String(charging).c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/NAU7802").c_str(), String(nauAvailable).c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/CalValue").c_str(), String(testvalue2).c_str()); delay(100);
-        
+        mqttClient.publish((topicBase + "/backend/ZeroOffset").c_str(), String(zero).c_str()); delay(100);
+        mqttClient.publish((topicBase + "/backend/setWeight").c_str(), String(grams).c_str()); delay(100);
 
         lastPublishTime = millis(); // Update the last publish time
         Serial.println("///////////////////LOOP///////////////////");

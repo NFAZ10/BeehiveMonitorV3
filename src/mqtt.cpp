@@ -33,19 +33,24 @@ void connectToMQTT() {
     String macAddress = getMacAddress();
     while (!mqttClient.connected()) {
         Serial.print("Attempting MQTT connection...");
-        // Attempt to connect
         if (mqttClient.connect("BeehiveMonitor")) {
             Serial.println("connected");
 
-            } else {
+            // Subscribe to backend topics
+            mqttClient.subscribe((macAddress + "/backend/battery").c_str());
+            mqttClient.subscribe((macAddress + "/backend/version").c_str());
+            mqttClient.subscribe((macAddress + "/backend/IP").c_str());
+            mqttClient.subscribe((macAddress + "/backend/charging").c_str());
+            mqttClient.subscribe((macAddress + "/backend/NAU7802").c_str());
+            mqttClient.subscribe((macAddress + "/backend/CalValue").c_str());
+
+            WebSerial.println("Subscribed to backend topics.");
+        } else {
             Serial.print("failed, rc=");
             Serial.print(mqttClient.state());
             Serial.println(" try again in 5 seconds");
-            // Wait 5 seconds before retrying
             static int retryCount = 0;
-
             delay(100);
-
             retryCount++;
             if (retryCount >= 5) {
                 Serial.println("Failed to connect to MQTT after 5 attempts. Moving on...");
@@ -55,8 +60,28 @@ void connectToMQTT() {
     }
 }
 
+
 void mqttCallback(char* topic, byte* payload, unsigned int length) {
+    payload[length] = '\0'; // Null-terminate the payload
+    String incomingPayload = String((char*)payload);
+    String incomingTopic = String(topic);
+
+    WebSerial.println("Message arrived [" + incomingTopic + "]: " + incomingPayload);
+
+    if (incomingTopic.endsWith("/backend/CalValue")) {
+        prefs.begin("beehive", false);
+        prefs.putFloat("calFactor",incomingPayload.toFloat());
+        prefs.end();
+        WebSerial.println("Calibration Value Set: " + String(incomingPayload.toFloat()));
+    } else  if (incomingTopic.endsWith("/backend/ZeroOffset")) {
+        prefs.begin("beehive", false);
+        prefs.putFloat("zeroOffset",incomingPayload.toFloat());
+        prefs.end();
+        WebSerial.println("Zero Offset Set: " + String(incomingPayload.toFloat()));
+    }
 }
+
+
 
 void initMQTT() {
     mqttClient.setServer(mqttServerb, mqttPortb);

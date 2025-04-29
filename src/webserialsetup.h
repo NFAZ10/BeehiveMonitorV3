@@ -23,6 +23,8 @@ void updateEXTTemp(float temp); // Function to update external temperature
 void updateEXTHum(float hum);   // Function to update external humidity
 void updateweightcard(float dgrams); // Function to update weight
 void dashLoop();        // Function to loop DashPro
+void attachcallbacks(); // Function to attach callbacks 
+
 
 
 #endif // WEBSERIALSETUP_H
