@@ -121,7 +121,7 @@ float nauRead(uint8_t sampleCount) {
   for (int i = 0; i < sampleCount; i++) {
     
       float reading = myScale.getWeight();
-      if (reading < 10000 && reading > -10000) {
+      //if (reading < 10000 && reading > -10000) {
         Serial.print("Reading Scale:  ");
         Serial.println(myScale.getReading());
         display.clearDisplay();
@@ -138,8 +138,8 @@ float nauRead(uint8_t sampleCount) {
           
        
         total += reading;
-        valid++;
-      }
+      //  valid++;
+    //  }
     
     delay(10);
   }
@@ -157,7 +157,7 @@ float nauRead(uint8_t sampleCount) {
 
  
   float weightraw = totalraw/sampleCount;
-  float weight = total / valid;
+  float weight = total / sampleCount;
 
   prefs.begin("beehive", false);
   int loadcellconfig = prefs.getInt("loadcellconfig", 0);
