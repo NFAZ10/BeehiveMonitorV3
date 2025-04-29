@@ -42,6 +42,17 @@ bool nauSetup() {
 
   readScaleSettings();
 
+  if (last_weightstore > 0) {
+    Serial.println("Last weight store is greater than 0. Taring the scale...");
+    myScale.calculateZeroOffset(10); // Tare the scale with 10 samples
+    myScale.setZeroOffset(last_weightstore); // Apply the last weight as the zero offset
+    Serial.print("Applied last weight store as zero offset: ");
+    Serial.println(last_weightstore);
+  } else {
+    myScale.setZeroOffset(0); // Default zero offset
+    Serial.println("Last weight store is 0. Setting zero offset to 0.");
+  }
+
   prefs.begin("beehive", false);
   float oldcalvalue = myScale.getCalibrationFactor();
   Serial.print("Old calibration factor: ");
@@ -61,8 +72,6 @@ bool nauSetup() {
   myScale.setSampleRate(NAU7802_SPS_320);
   myScale.setLDO(NAU7802_LDO_3V3);
   myScale.calibrateAFE();
-  //myScale.setChannel(NAU7802_CHANNEL_1); //Select between channel values
-  
 
   Serial.print("Zero offset: ");
   Serial.println(myScale.getZeroOffset());
@@ -99,11 +108,7 @@ void nauCalibrate(float knownWeight, uint16_t samples) {
 
 float nauRead(uint8_t sampleCount) {
 
-  if (last_weightstore > 0) {
-    myScale.setZeroOffset(last_weightstore);
-  } else {
-    myScale.setZeroOffset(0);
-  }
+
 
   Serial.println("Reading NAU7802 in Loop...");
   WebSerial.println("Reading NAU7802...");
