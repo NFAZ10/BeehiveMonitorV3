@@ -208,6 +208,18 @@ WebSerial.println(String("RawGrams: ") + grams);
         WebSerial.println("Did not break threshold 20+/-.");
     }
 
+    prefs.begin("beehive", false);
+    int loadcellconfig = prefs.getInt("loadcellconfig", 0);
+    prefs.end();
+    if (loadcellconfig == 1) {
+      grams = grams*2; // One Side load cell configuration
+    }else if (loadcellconfig == 2) {
+      grams = grams; // Two Side load cell configuration
+    }else {
+  
+      grams = grams; // Default load cell configuration
+    }
+
     WebSerial.println(String("Last Weight: ") + last_weightstore);
     grams = grams + last_weightstore; // set offset from last weight
 
