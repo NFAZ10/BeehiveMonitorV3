@@ -213,7 +213,7 @@ void loop() {
 
 
         int32_t zero = pref.getInt("zeroOffset",0);
-
+        int cellconfig = pref.getInt("loadcellconfig",0);
 
         mqttClient.publish((topicBase + "/temperature1").c_str(), String(temp1).c_str()); delay(100);
         mqttClient.publish((topicBase + "/humidity1").c_str(), String(h1).c_str()); delay(100);
@@ -230,6 +230,7 @@ void loop() {
         mqttClient.publish((topicBase + "/backend/CalValue").c_str(), String(testvalue2).c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/ZeroOffset").c_str(), String(zero).c_str()); delay(100);
         mqttClient.publish((topicBase + "/backend/setWeight").c_str(), String(grams).c_str()); delay(100);
+        mqttClient.publish((topicBase + "/backend/loadcellconfig").c_str(), String(cellconfig).c_str()); delay(100);
 
         lastPublishTime = millis(); // Update the last publish time
         Serial.println("///////////////////LOOP///////////////////");

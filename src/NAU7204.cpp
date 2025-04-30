@@ -48,10 +48,7 @@ bool nauSetup() {
     myScale.setZeroOffset(last_weightstore); // Apply the last weight as the zero offset
     Serial.print("Applied last weight store as zero offset: ");
     Serial.println(last_weightstore);
-  } else {
-    myScale.setZeroOffset(0); // Default zero offset
-    Serial.println("Last weight store is 0. Setting zero offset to 0.");
-  }
+  } 
 
   prefs.begin("beehive", false);
   float oldcalvalue = myScale.getCalibrationFactor();
