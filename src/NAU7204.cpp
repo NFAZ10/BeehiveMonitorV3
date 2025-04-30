@@ -124,6 +124,8 @@ float nauRead(uint8_t sampleCount) {
       //if (reading < 10000 && reading > -10000) {
         Serial.print("Reading Scale:  ");
         Serial.println(myScale.getReading());
+        WebSerial.print("Reading Scale:  ");
+        WebSerial.println(myScale.getReading());
         display.clearDisplay();
         display.setTextSize(1); // Set text size to 2 for larger text
         display.setTextColor(SSD1306_WHITE); // Set text color to white
