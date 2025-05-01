@@ -41,7 +41,7 @@ bool nauSetup() {
   Serial.println("NAU7802 detected.");
 
   readScaleSettings();
-
+/*
   if (last_weightstore > 0) {
     Serial.println("Last weight store is greater than 0. Taring the scale...");
     myScale.calculateZeroOffset(10); // Tare the scale with 10 samples
@@ -49,7 +49,7 @@ bool nauSetup() {
     Serial.print("Applied last weight store as zero offset: ");
     Serial.println(last_weightstore);
   } 
-
+*/
   prefs.begin("beehive", false);
   float oldcalvalue = myScale.getCalibrationFactor();
   Serial.print("Old calibration factor: ");
@@ -120,9 +120,9 @@ float nauRead(uint8_t sampleCount) {
       float reading = myScale.getWeight();
       //if (reading < 10000 && reading > -10000) {
         Serial.print("Reading Scale:  ");
-        Serial.println(myScale.getReading());
+        Serial.println(myScale.getWeight());
         WebSerial.print("Reading Scale:  ");
-        WebSerial.println(myScale.getReading());
+        WebSerial.println(myScale.getWeight());
         display.clearDisplay();
         display.setTextSize(1); // Set text size to 2 for larger text
         display.setTextColor(SSD1306_WHITE); // Set text color to white

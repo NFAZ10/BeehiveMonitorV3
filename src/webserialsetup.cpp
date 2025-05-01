@@ -21,6 +21,8 @@ Card card1(&dashboard, STATUS_CARD, "WiFi Status", DASH_STATUS_SUCCESS);
 Card temperature(&dashboard, TEMPERATURE_CARD, "Ext Temperature", "°F");
 Card humidity(&dashboard, HUMIDITY_CARD, "Ext Humidity", "%");
 Card weightcard(&dashboard, GENERIC_CARD, "Weight", "g");
+Card calibration(&dashboard, GENERIC_CARD, "CalValue", "");
+Card offset(&dashboard, GENERIC_CARD, "ZeroOffset", "");
 
 
 
@@ -60,6 +62,13 @@ void updateEXTHum(float hum) {
 
 void updateweightcard(float dgrams) {
   weightcard.update(dgrams);
+}
+
+void updatecalcard(float dgrams) {
+  calibration.update(dgrams);
+}
+void updatezerocard(float dgrams) {
+  offset.update(dgrams);
 }
 
 void attachcallbacks(){

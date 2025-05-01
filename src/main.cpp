@@ -165,13 +165,14 @@ void loop() {
 
     if (nauAvailable) {
         WebSerial.println("Reading NAU7802...");
-        grams = nauRead(100); // Get the weight from NAU7802
+        grams = nauRead(15); // Get the weight from NAU7802
     } else if(!nauAvailable) {
         WebSerial.println("Reading HX711...");
         updateScale();
     }
     
-    
+    updatezerocard(myScale.getZeroOffset()); // Function to update zero offset
+    updatecalcard(myScale.getCalibrationFactor()); // Function to update calibration va
 
     float weightCorrected = grams + (t1 - T_BASELINE) * TEMP_SENSITIVITY;
     updateweightcard(grams);
@@ -214,23 +215,37 @@ void loop() {
 
         int32_t zero = pref.getInt("zeroOffset",0);
         int cellconfig = pref.getInt("loadcellconfig",0);
+        static float lastWeight = 0.0;
+        static unsigned long lastPublishTime = 0;
+        const unsigned long publishInterval = 15 * 60 * 1000; // 15 minutes in milliseconds
 
-        mqttClient.publish((topicBase + "/temperature1").c_str(), String(temp1).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/humidity1").c_str(), String(h1).c_str()); delay(100);
-        if(t2>0){mqttClient.publish((topicBase + "/temperature2").c_str(), String(t2).c_str()); delay(100);}
-        if(h2>0){mqttClient.publish((topicBase + "/humidity2").c_str(), String(h2).c_str()); delay(100);}
-        mqttClient.publish((topicBase + "/weight").c_str(), String(grams).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/tempadjustedweight").c_str(), String(weightCorrected).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/battery").c_str(), String(voltageDividerReading).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/backend/version").c_str(), String(currentVersion).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/lbs").c_str(), String(weightInPounds).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/backend/IP").c_str(), WiFi.localIP().toString().c_str()); delay(100);
-        mqttClient.publish((topicBase + "/charging").c_str(), String(charging).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/backend/NAU7802").c_str(), String(nauAvailable).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/backend/CalValue").c_str(), String(testvalue2).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/backend/ZeroOffset").c_str(), String(zero).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/backend/setWeight").c_str(), String(grams).c_str()); delay(100);
-        mqttClient.publish((topicBase + "/backend/loadcellconfig").c_str(), String(cellconfig).c_str()); delay(100);
+        if (abs(grams - lastWeight) > 300 || millis() - lastPublishTime > publishInterval) {
+            Serial.println(abs(grams - lastWeight));
+            mqttClient.publish((topicBase + "/temperature1").c_str(), String(temp1).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/humidity1").c_str(), String(h1).c_str()); delay(100);
+            if(t2>0){mqttClient.publish((topicBase + "/temperature2").c_str(), String(t2).c_str()); delay(100);}
+            if(h2>0){mqttClient.publish((topicBase + "/humidity2").c_str(), String(h2).c_str()); delay(100);}
+            mqttClient.publish((topicBase + "/weight").c_str(), String(grams).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/tempadjustedweight").c_str(), String(weightCorrected).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/battery").c_str(), String(voltageDividerReading).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/backend/version").c_str(), String(currentVersion).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/lbs").c_str(), String(weightInPounds).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/backend/IP").c_str(), WiFi.localIP().toString().c_str()); delay(100);
+            mqttClient.publish((topicBase + "/charging").c_str(), String(charging).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/backend/NAU7802").c_str(), String(nauAvailable).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/backend/CalValue").c_str(), String(testvalue2).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/backend/ZeroOffset").c_str(), String(zero).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/backend/setWeight").c_str(), String(grams).c_str()); delay(100);
+            mqttClient.publish((topicBase + "/backend/loadcellconfig").c_str(), String(cellconfig).c_str()); delay(100);
+    
+            lastWeight = grams;
+            lastPublishTime = millis();
+        } else {
+            // Publish heartbeat
+            Serial.println("Heartbeat sent to MQTT");
+            WebSerial.println("Heartbeat sent to MQTT");
+            mqttClient.publish((topicBase + "/heartbeat").c_str(), "1"); delay(100);
+        }
 
         lastPublishTime = millis(); // Update the last publish time
         Serial.println("///////////////////LOOP///////////////////");

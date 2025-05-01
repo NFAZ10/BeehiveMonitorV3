@@ -22,6 +22,8 @@ void disconnectWifi();
 void updateEXTTemp(float temp); // Function to update external temperature
 void updateEXTHum(float hum);   // Function to update external humidity
 void updateweightcard(float dgrams); // Function to update weight
+void updatezerocard(float dgrams); // Function to update zero offset
+void updatecalcard(float dgrams); // Function to update calibration value
 void dashLoop();        // Function to loop DashPro
 void attachcallbacks(); // Function to attach callbacks 
 
