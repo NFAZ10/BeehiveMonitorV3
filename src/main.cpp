@@ -219,7 +219,7 @@ void loop() {
         static unsigned long lastPublishTime = 0;
         const unsigned long publishInterval = 15 * 60 * 1000; // 15 minutes in milliseconds
 
-        if (abs(grams - lastWeight) > 300 || millis() - lastPublishTime > publishInterval) {
+        if (abs(grams - lastWeight) > 1000 || millis() - lastPublishTime > publishInterval || heartbeat > 30) {
             Serial.println(abs(grams - lastWeight));
             mqttClient.publish((topicBase + "/temperature1").c_str(), String(temp1).c_str()); delay(100);
             mqttClient.publish((topicBase + "/humidity1").c_str(), String(h1).c_str()); delay(100);
