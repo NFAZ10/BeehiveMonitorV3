@@ -24,7 +24,7 @@ float voltageDividerReading = 0.0;
 float voltageCalibrationFactor = 1.31;
 float voltageOffset = 0.0;
 int heartbeat = 0;
-String topicBase = "beehive/data/";
+String topicBase;
 
 
 
@@ -44,7 +44,7 @@ const char* DEVcurrentVersion = "1.2.3DEV";
 
 const char* MAINversionURL = "https://raw.githubusercontent.com/NFAZ10/BeehiveMonitorV3/refs/heads/main/version.txt";
 const char* MAINfirmwareURL = "https://raw.githubusercontent.com/NFAZ10/BeehiveMonitorV3/main/.pio/build/esp32dev/firmware.bin";
-const char* MAINcurrentVersion = "3.4.2";
+const char* MAINcurrentVersion = "3.4.3";
 
 const char* versionURL;
 const char* firmwareURL;

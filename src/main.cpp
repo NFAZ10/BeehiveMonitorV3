@@ -210,7 +210,7 @@ void loop() {
         } else {
             snprintf(macStr, sizeof(macStr), "%02X%02X%02X%02X", mac[2], mac[3], mac[4], mac[5]);
         }
-        //String topicBase = "beehive/data/";
+        topicBase = "beehive/data/";
         topicBase += macStr; // Get the last 4 digits of the MAC address
 
 
