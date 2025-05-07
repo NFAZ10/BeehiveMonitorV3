@@ -65,7 +65,6 @@ extern bool nauAvailable;
 extern int heartbeat;
 
 extern String Name;
-extern String topicBase;
 
 extern float h1, t1;
 extern float h2, t2;

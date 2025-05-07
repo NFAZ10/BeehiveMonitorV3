@@ -137,6 +137,26 @@ void loop() {
     WebSerial.println("/*************************************/");
     NWLoop();
     WebSerial.loop();
+    if (WiFi.status() == WL_CONNECTED) {
+        if (!mqttClient.connected()) {
+            checkForUpdates();
+            connectToMQTT();
+            //mqttClient.publish((topicBase + "/backend/sleepmode").c_str(), String("Awake").c_str()); delay(100);
+        }
+        mqttClient.loop();
+
+        uint8_t mac[6];
+        WiFi.macAddress(mac);
+        char macStr[13];
+        if (Name != NULL) {
+            strncpy(macStr, Name.c_str(), sizeof(macStr) - 1);
+            macStr[sizeof(macStr) - 1] = '\0'; // Ensure null-termination
+        } else {
+            snprintf(macStr, sizeof(macStr), "%02X%02X%02X%02X", mac[2], mac[3], mac[4], mac[5]);
+        }
+    String topicBase = "beehive/data/";
+    topicBase += macStr; // Get the last 4 digits of the MAC address
+
 
     if (tareRequested) {
         tareRequested = false; // Clear the flag
@@ -193,25 +213,7 @@ void loop() {
   
     float testvalue2 = pref.getFloat("calFactor", 0.0);
     
-    if (WiFi.status() == WL_CONNECTED) {
-        if (!mqttClient.connected()) {
-            checkForUpdates();
-            connectToMQTT();
-            mqttClient.publish((topicBase + "/backend/sleepmode").c_str(), String("Awake").c_str()); delay(100);
-        }
-        mqttClient.loop();
 
-        uint8_t mac[6];
-        WiFi.macAddress(mac);
-        char macStr[13];
-        if (Name != NULL) {
-            strncpy(macStr, Name.c_str(), sizeof(macStr) - 1);
-            macStr[sizeof(macStr) - 1] = '\0'; // Ensure null-termination
-        } else {
-            snprintf(macStr, sizeof(macStr), "%02X%02X%02X%02X", mac[2], mac[3], mac[4], mac[5]);
-        }
-        topicBase = "beehive/data/";
-        topicBase += macStr; // Get the last 4 digits of the MAC address
 
 
         int32_t zero = pref.getInt("zeroOffset",0);
@@ -316,11 +318,11 @@ void loop() {
         if (battery > 4.15) {
             WebSerial.println("Battery is above 4.15V. Restarting Loop.");
             Serial.println("Battery is above 4.15V. Restarting Loop.");
-            mqttClient.publish((topicBase + "/backend/mode").c_str(), String("Loop").c_str()); delay(100);
+          //  mqttClient.publish((topicBase + "/backend/mode").c_str(), String("Loop").c_str()); delay(100);
         } else if (battery < 4.15 && battery > 3.9) {
             WebSerial.println("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
             Serial.println("Battery is between 4.15V and 3.7V. Entering Light Sleep For 30 Min.");
-            mqttClient.publish((topicBase + "/backend/mode").c_str(), String("30Min Sleep").c_str()); delay(100);
+          //  mqttClient.publish((topicBase + "/backend/mode").c_str(), String("30Min Sleep").c_str()); delay(100);
             myScale.powerDown();
             delay(1000);
             enterLightSleep(1800); // 30 minutes
@@ -329,13 +331,13 @@ void loop() {
             myScale.powerDown();
             WebSerial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
             Serial.println("Battery is below 3.7V. Entering Light Sleep for 1 Hour.");
-            mqttClient.publish((topicBase + "/backend/mode").c_str(), String("1 Hour Sleep").c_str()); delay(100);
+          //  mqttClient.publish((topicBase + "/backend/mode").c_str(), String("1 Hour Sleep").c_str()); delay(100);
             enterLightSleep(3600); // 1 hour
         } else {
             clearOLED();
             WebSerial.println("Deep Sleep for 3 Hours.");
             Serial.println("Battery is below 3.5V. Entering Deep Sleep for 2 Hour.");
-            mqttClient.publish((topicBase + "/backend/mode").c_str(), String("3 Hour Sleep").c_str()); delay(100);
+           // mqttClient.publish((topicBase + "/backend/mode").c_str(), String("3 Hour Sleep").c_str()); delay(100);
             myScale.powerDown();
             delay(1000);
             enterLightSleep(10800); // 3 hours
@@ -344,7 +346,7 @@ void loop() {
         // Do nothing
     }
     printPreferences();
-    mqttClient.publish((topicBase + "/backend/sleepmode").c_str(), String("Light Sleep").c_str()); delay(100);
+    //mqttClient.publish((topicBase + "/backend/sleepmode").c_str(), String("Light Sleep").c_str()); delay(100);
     printToOLED("Light Sleep Starting");
     delay(1000);
     printToOLED("...");
