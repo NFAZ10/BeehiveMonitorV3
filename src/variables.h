@@ -3,6 +3,34 @@
 
 #include <Arduino.h>
 
+// Debug levels
+#define DEBUG_LEVEL_NONE 0
+#define DEBUG_LEVEL_ERROR 1
+#define DEBUG_LEVEL_INFO 2
+#define DEBUG_LEVEL_VERBOSE 3
+
+// Set current debug level
+#define CURRENT_DEBUG_LEVEL DEBUG_LEVEL_INFO
+
+// Debug macros
+#if CURRENT_DEBUG_LEVEL >= DEBUG_LEVEL_ERROR
+  #define DEBUG_ERROR(x) Serial.println("[ERROR] " x)
+#else
+  #define DEBUG_ERROR(x)
+#endif
+
+#if CURRENT_DEBUG_LEVEL >= DEBUG_LEVEL_INFO
+  #define DEBUG_INFO(x) Serial.println("[INFO] " x)
+#else
+  #define DEBUG_INFO(x)
+#endif
+
+#if CURRENT_DEBUG_LEVEL >= DEBUG_LEVEL_VERBOSE
+  #define DEBUG_VERBOSE(x) Serial.println("[VERBOSE] " x)
+#else
+  #define DEBUG_VERBOSE(x)
+#endif
+
 // Constants and definitions
 #define TARE_BUTTON_PIN        25
 #define FactoryReset_PIN       33
@@ -18,7 +46,9 @@
 #define LED_PIN    15
 #define LED_COUNT 1
 
-
+// Memory optimization
+#define PREFERENCES_NAMESPACE "beehive"
+#define PREFERENCES_READ_ONLY false
 
 // Global variable declarations (extern)
 extern bool debug;
@@ -32,6 +62,7 @@ extern bool newSetup;
 extern int reversedloadcell;
 extern bool nauCalRequested;
 extern bool nauAvailable;
+extern int heartbeat;
 
 extern String Name;
 

@@ -240,11 +240,13 @@ void loop() {
     
             lastWeight = grams;
             lastPublishTime = millis();
+            heartbeat = 0; // Reset heartbeat counter after publishing data
         } else {
             // Publish heartbeat
             Serial.println("Heartbeat sent to MQTT");
             WebSerial.println("Heartbeat sent to MQTT");
-            mqttClient.publish((topicBase + "/heartbeat").c_str(), "1"); delay(100);
+            mqttClient.publish((topicBase + "/heartbeat").c_str(), String(heartbeat).c_str()); delay(100);
+            heartbeat++;
         }
 
         lastPublishTime = millis(); // Update the last publish time
@@ -340,6 +342,6 @@ void loop() {
     printToOLED("Light Sleep Starting");
     delay(1000);
     printToOLED("...");
-    //enterLightSleep(30);
+    enterLightSleep(30);
 }
 
