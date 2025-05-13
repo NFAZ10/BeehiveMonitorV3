@@ -43,6 +43,8 @@ void connectToMQTT() {
             mqttClient.subscribe((macAddress + "/backend/charging").c_str());
             mqttClient.subscribe((macAddress + "/backend/NAU7802").c_str());
             mqttClient.subscribe((macAddress + "/backend/CalValue").c_str());
+            mqttClient.subscribe((macAddress + "/backend/loadcellconfig").c_str());
+
 
             WebSerial.println("Subscribed to backend topics.");
         } else {
@@ -78,6 +80,11 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
         prefs.putFloat("zeroOffset",incomingPayload.toFloat());
         prefs.end();
         WebSerial.println("Zero Offset Set: " + String(incomingPayload.toFloat()));
+    }else if (incomingTopic.endsWith("/backend/loadcellconfig")) {
+        prefs.begin("beehive", false);
+        prefs.putInt("loadcellconfig",incomingPayload.toInt());
+        prefs.end();
+        WebSerial.println("Load Cell Config Set: " + String(incomingPayload.toInt()));
     }
 }
 

@@ -233,6 +233,32 @@ void recvMsg(uint8_t *data, size_t len) {
       delay(1000);
      // ESP.restart();
     }
+  }else if(msg == "loadcellconfig[0]"){
+    prefs.begin("beehive",false);
+    prefs.putInt("loadcellconfig", 0);
+    WebSerial.println("Loadcell Config: 0");
+    prefs.end();
+  }else if(msg == "loadcellconfig[1]"){
+    prefs.begin("beehive",false);
+    prefs.putInt("loadcellconfig", 1);
+    WebSerial.println("Loadcell Config: 1");
+    prefs.end();
+  }
+
+  else if (msg == "debug") {
+    debug = !debug;
+    WebSerial.println("Debug Mode Toggled");
+  }
+
+  else if (msg == "factoryreset") {
+    Serial.println("Factory Reset Button Pressed");
+    newSetup = true; // Set the flag when the interrupt is triggered
+    clearPreferences();
+    ESP.restart();
+  }
+
+  else if (msg == "printprefs") {
+    printPreferences();
   }
 
   else if (msg == "clear") {
