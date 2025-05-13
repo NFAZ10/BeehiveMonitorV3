@@ -27,7 +27,7 @@
 /////////////////
 
 float battery = 0.0;
-float grams = 0.0;
+float grams;
 float temp1 = NAN;
 float temp2 = NAN;
 float weight = 0.0;
@@ -38,6 +38,10 @@ int timesincelastrestart = 0;
 float oldbattery = 0.0;
 bool charging = false;
 extern String Name;
+extern float mva24;
+static int mismatchCount = 0;
+const int mismatchThreshold = 3;
+
 
 const float TEMP_SENSITIVITY = 190;  // grams per degree Celsius
 const float T_BASELINE = 0.1;          // temp at calibration time
@@ -140,7 +144,9 @@ void loop() {
     if (WiFi.status() == WL_CONNECTED) {
         if (!mqttClient.connected()) {
             checkForUpdates();
+            delay(1000);
             connectToMQTT();
+            
             //mqttClient.publish((topicBase + "/backend/sleepmode").c_str(), String("Awake").c_str()); delay(100);
         }
         mqttClient.loop();
@@ -172,7 +178,7 @@ void loop() {
             tareScale(); // Tare HX711
         }
     }
-
+    mqttClient.loop();
 
     if(nauCalRequested) {
         nauCalibrate(1000, 100); // Calibrate NAU7802
@@ -210,7 +216,7 @@ void loop() {
     updateOLED();
 
     pref.begin("beehive",false);
-  
+    mqttClient.loop();
     float testvalue2 = pref.getFloat("calFactor", 0.0);
     
 
@@ -228,7 +234,18 @@ void loop() {
             mqttClient.publish((topicBase + "/humidity1").c_str(), String(h1).c_str()); delay(100);
             if(t2>0){mqttClient.publish((topicBase + "/temperature2").c_str(), String(t2).c_str()); delay(100);}
             if(h2>0){mqttClient.publish((topicBase + "/humidity2").c_str(), String(h2).c_str()); delay(100);}
-            mqttClient.publish((topicBase + "/weight").c_str(), String(grams).c_str()); delay(100);
+
+            if (abs(mva24 - grams) <= 10000) {
+                mqttClient.publish((topicBase + "/weight").c_str(), String(grams).c_str()); delay(100);
+                WebSerial.println("Weight is close to mva24. Publishing grams.");
+                mismatchCount = 0; // Reset mismatch count if values are close
+            } else {
+                mismatchCount++;
+                if (mismatchCount >= mismatchThreshold) {
+                    WebSerial.println("Mismatch detected. Publishing mva24 instead.");
+                    mqttClient.publish((topicBase + "/weight").c_str(), String(mva24).c_str()); delay(100);
+                }
+            }
             mqttClient.publish((topicBase + "/tempadjustedweight").c_str(), String(weightCorrected).c_str()); delay(100);
             mqttClient.publish((topicBase + "/battery").c_str(), String(voltageDividerReading).c_str()); delay(100);
             mqttClient.publish((topicBase + "/backend/version").c_str(), String(currentVersion).c_str()); delay(100);
@@ -289,7 +306,7 @@ void loop() {
 
     WebSerial.println(String("Disable Sleep: ") + disablesleep);
     Serial.println(String("Disable Sleep: ") + disablesleep);
-
+    mqttClient.loop();
     pref.begin("beehive", false);
     int weighttest = pref.getInt("Weight", 0);
     WebSerial.println(String("Weight Test:  ") + weight);
@@ -313,7 +330,7 @@ void loop() {
         ESP.restart();
     }
     delay(1);
-
+    mqttClient.loop();
     if (disablesleep == false) {
         if (battery > 4.15) {
             WebSerial.println("Battery is above 4.15V. Restarting Loop.");

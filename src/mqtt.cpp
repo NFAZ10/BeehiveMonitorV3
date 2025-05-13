@@ -14,6 +14,7 @@ const char* mqttServerb = "mqtt.beehivemonitor.com";
 const int mqttPortb = 4116;
 
 extern String Name;
+float mva24;
 
 #include <WiFi.h>  // Ensure WiFi library is included
 #include <Arduino.h>
@@ -35,15 +36,24 @@ void connectToMQTT() {
         Serial.print("Attempting MQTT connection...");
         if (mqttClient.connect("BeehiveMonitor")) {
             Serial.println("connected");
-
+            String topicPrefix = "beehive/data/" + macAddress;
             // Subscribe to backend topics
-            mqttClient.subscribe((macAddress + "/backend/battery").c_str());
-            mqttClient.subscribe((macAddress + "/backend/version").c_str());
-            mqttClient.subscribe((macAddress + "/backend/IP").c_str());
-            mqttClient.subscribe((macAddress + "/backend/charging").c_str());
-            mqttClient.subscribe((macAddress + "/backend/NAU7802").c_str());
-            mqttClient.subscribe((macAddress + "/backend/CalValue").c_str());
-            mqttClient.subscribe((macAddress + "/backend/loadcellconfig").c_str());
+            mqttClient.subscribe((topicPrefix + "/backend/battery").c_str());
+            WebSerial.println("Subscribed to backend battery topic.");
+            mqttClient.subscribe((topicPrefix + "/backend/version").c_str());
+            WebSerial.println("Subscribed to backend version topic.");
+            mqttClient.subscribe((topicPrefix + "/backend/IP").c_str());
+            WebSerial.println("Subscribed to backend IP topic.");
+            mqttClient.subscribe((topicPrefix + "/backend/charging").c_str());
+            WebSerial.println("Subscribed to backend charging topic.");
+            mqttClient.subscribe((topicPrefix + "/backend/NAU7802").c_str());
+            WebSerial.println("Subscribed to backend NAU7802 topic.");
+            mqttClient.subscribe((topicPrefix + "/backend/CalValue").c_str());
+            WebSerial.println("Subscribed to backend CalValue topic.");
+            mqttClient.subscribe((topicPrefix + "/backend/loadcellconfig").c_str());
+            WebSerial.println("Subscribed to backend loadcellconfig topic.");
+            mqttClient.subscribe((topicPrefix + "/backend/mva24h").c_str());
+            WebSerial.println("Subscribed to weight topic.");
 
 
             WebSerial.println("Subscribed to backend topics.");
@@ -85,7 +95,11 @@ void mqttCallback(char* topic, byte* payload, unsigned int length) {
         prefs.putInt("loadcellconfig",incomingPayload.toInt());
         prefs.end();
         WebSerial.println("Load Cell Config Set: " + String(incomingPayload.toInt()));
+    }if (incomingTopic.endsWith("/backend/mva24h")) {
+        float mva24 = incomingPayload.toFloat();  // ← Set grams here
+        WebSerial.println("MVA4 (from backend/mva24h) set to: " + String(mva24));
     }
+    
 }
 
 

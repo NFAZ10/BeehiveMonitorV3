@@ -4,6 +4,7 @@
 #include <PubSubClient.h>
 
 extern PubSubClient mqttClient;
+extern float mva24;
 
 void initAWS();
 void connectToAWS();
