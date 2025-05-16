@@ -235,7 +235,7 @@ void loop() {
             if(t2>0){mqttClient.publish((topicBase + "/temperature2").c_str(), String(t2).c_str()); delay(100);}
             if(h2>0){mqttClient.publish((topicBase + "/humidity2").c_str(), String(h2).c_str()); delay(100);}
 
-            if (abs(mva24 - grams) <= 10000) {
+            if (abs(mva24 - grams) <= 100000) {
                 mqttClient.publish((topicBase + "/weight").c_str(), String(grams).c_str()); delay(100);
                 WebSerial.println("Weight is close to mva24. Publishing grams.");
                 mismatchCount = 0; // Reset mismatch count if values are close
